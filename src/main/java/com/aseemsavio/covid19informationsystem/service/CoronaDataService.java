@@ -1,0 +1,166 @@
+package com.aseemsavio.covid19informationsystem.service;
+
+import com.aseemsavio.covid19informationsystem.model.CoronaData;
+import com.aseemsavio.covid19informationsystem.model.CoronaDataExtra;
+import com.aseemsavio.covid19informationsystem.repository.CoronaDataRepository;
+import com.aseemsavio.covid19informationsystem.utils.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.*;
+import static com.aseemsavio.covid19informationsystem.utils.Type.CONFIRMED;
+import static com.aseemsavio.covid19informationsystem.utils.Type.DEATH;
+
+@Service
+public class CoronaDataService {
+
+    @Value("${timeseries.source.url}")
+    private String SOURCE_URL;
+
+    @Autowired
+    private CoronaDataRepository dataRepository;
+
+    private static final Logger log = LoggerFactory.getLogger(CoronaDataService.class);
+
+    /**
+     * Reads the CSV file
+     *
+     * @return
+     * @throws MalformedURLException
+     */
+    public List<CoronaData> readCSV(String fileName, Type type) throws MalformedURLException {
+        log.info("Parsing " + type.toString() + " data starts");
+        String fullURL = SOURCE_URL + fileName;
+        URL url = new URL(fullURL);
+        String line = EMPTY_STRING;
+
+        List<CoronaData> coronaDataList = new ArrayList<>();
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()))) {
+            while ((line = bufferedReader.readLine()) != null) {
+                if (!line.startsWith("Province")) {
+                    List<String> strings = Arrays.asList(line.split(COMMA));
+                    int length = strings.size();
+                    CoronaData data = new CoronaData();
+                    data.setProvince(strings.get(0));
+                    data.setCountry(strings.get(1));
+                    try {
+                        data.setLatitude(Double.parseDouble(strings.get(2)));
+                        data.setLongitude(Double.parseDouble(strings.get(3)));
+                        if (type.equals(CONFIRMED)) {
+                            data.setConfirmedCount(strings.stream()
+                                    .filter(record -> strings.indexOf(record) > 3)
+                                    .map(record -> Long.parseLong(record))
+                                    .collect(Collectors.toList()));
+                        } else if (type.equals(DEATH)) {
+                            data.setDeathCount(strings.stream()
+                                    .filter(record -> strings.indexOf(record) > 3)
+                                    .map(record -> Long.parseLong(record))
+                                    .collect(Collectors.toList()));
+                        }
+                        coronaDataList.add(data);
+                    } catch (Exception e) {
+                        log.error("Exception occurred while parsing data for + " + strings.get(0) + " " + strings.get(1) + ": " + e);
+                    }
+                }
+            }
+        } catch (Exception exception) {
+            log.error("Unexpected Error occurred while parsing data: " + exception);
+        }
+        log.info("Parsing CSV Data ended.");
+        return coronaDataList;
+    }
+
+    /**
+     * Edits the existing CoronaData List
+     *
+     * @param existingDataList
+     * @param fileName
+     * @param type
+     * @return
+     * @throws MalformedURLException
+     */
+    public List<CoronaData> editExistingList(List<CoronaData> existingDataList, String fileName, Type type) throws MalformedURLException {
+        List<CoronaData> newList = readCSV(fileName, type);
+        if (existingDataList.size() == newList.size()) {
+            for (int i = 0; i < existingDataList.size(); i++) {
+                if ((existingDataList.get(i).getCountry().equals(newList.get(i).getCountry())) &&
+                        (existingDataList.get(i).getProvince().equals(newList.get(i).getProvince()))) {
+                    if (type.equals(DEATH))
+                        existingDataList.get(i).setDeathCount(newList.get(i).getDeathCount());
+                    else if (type.equals(CONFIRMED))
+                        existingDataList.get(i).setConfirmedCount(newList.get(i).getConfirmedCount());
+                }
+            }
+        }
+        return existingDataList;
+    }
+
+    /**
+     * Saves all the individual records.
+     *
+     * @param coronaDataList
+     * @return
+     */
+    public List<String> saveToCollection(List<CoronaData> coronaDataList) {
+        log.info("Saving Data to Collection...");
+        return dataRepository.saveAll(coronaDataList)
+                .stream().map(record -> record.getDataId())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves all the data in the DB irrespective of any condition.
+     *
+     * @return
+     */
+    public List<CoronaData> findAllData() {
+        return dataRepository.findAll();
+    }
+
+    /**
+     * Gives today's count instead of the time series.
+     *
+     * @return
+     */
+    public List<CoronaDataExtra> findAllCount() {
+        List<CoronaData> data = dataRepository.findAll();
+        int size = data.size();
+        List<CoronaDataExtra> extra = data.stream().map(record -> {
+            CoronaDataExtra dataExtra = new CoronaDataExtra();
+            dataExtra.setDataId(record.getDataId());
+            dataExtra.setCountry(record.getCountry());
+            dataExtra.setProvince(record.getProvince());
+            dataExtra.setLatitude(record.getLatitude());
+            dataExtra.setLongitude(record.getLongitude());
+            dataExtra.setTodaysConfirmed(record.getConfirmedCount().get(size - 1));
+            dataExtra.setTodaysDeaths(record.getDeathCount().get(size - 1));
+            return dataExtra;
+        }).collect(Collectors.toList());
+        return extra;
+    }
+
+    /**
+     * Return all the provinces for which data is available.
+     *
+     * @return
+     */
+    public List<String> findAllProvinces() {
+        return dataRepository.findAll()
+                .stream()
+                .filter(record -> (record.getProvince() != null) || !record.getProvince().equals(""))
+                .map(record -> record.getProvince())
+                .collect(Collectors.toList());
+    }
+}
