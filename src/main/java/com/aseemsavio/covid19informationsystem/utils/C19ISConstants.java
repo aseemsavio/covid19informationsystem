@@ -9,4 +9,13 @@ public class C19ISConstants {
     public static final String STATUS_OK = "OK";
     public static final String STATUS_FAILED = "FAILED";
 
+    // Error Codes
+    public static final int ERRORCODE_NOT_FOUND = -1;
+
+
+    // Error Messages
+    public static final String ERROR_MSG_NOT_FOUND = "Data Not Found";
+
+
+
 }

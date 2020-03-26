@@ -25,6 +25,9 @@ public class Response {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<String> countries;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<Error> errors;
+
     public String getStatus() {
         return status;
     }
@@ -73,6 +76,14 @@ public class Response {
         this.countries = countries;
     }
 
+    public List<Error> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<Error> errors) {
+        this.errors = errors;
+    }
+
     @Override
     public String toString() {
         return "Response{" +
@@ -82,6 +93,7 @@ public class Response {
                 ", countData=" + countData +
                 ", provinces=" + provinces +
                 ", countries=" + countries +
+                ", errors=" + errors +
                 '}';
     }
 }

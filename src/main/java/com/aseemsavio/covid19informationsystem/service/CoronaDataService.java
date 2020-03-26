@@ -144,8 +144,8 @@ public class CoronaDataService {
             dataExtra.setProvince(record.getProvince());
             dataExtra.setLatitude(record.getLatitude());
             dataExtra.setLongitude(record.getLongitude());
-            dataExtra.setTodaysConfirmed(record.getConfirmedCount().get(size - 1));
-            dataExtra.setTodaysDeaths(record.getDeathCount().get(size - 1));
+            dataExtra.setTodaysConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
+            dataExtra.setTodaysDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
             return dataExtra;
         }).collect(Collectors.toList());
         return extra;
@@ -159,8 +159,31 @@ public class CoronaDataService {
     public List<String> findAllProvinces() {
         return dataRepository.findAll()
                 .stream()
-                .filter(record -> (record.getProvince() != null) || !record.getProvince().equals(""))
-                .map(record -> record.getProvince())
+                .map(record -> record.getProvince() == null || record.getProvince().equals(EMPTY_STRING) ? EMPTY_STRING : record.getProvince())
+                .filter(record -> !record.equals(EMPTY_STRING))
+                .distinct()
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns all the countries for which data is available.
+     *
+     * @return
+     */
+    public List<String> findAllCountries() {
+        return dataRepository.findAll()
+                .stream()
+                .map(record -> record.getCountry() == null || record.getCountry().equals(EMPTY_STRING) ? EMPTY_STRING : record.getCountry())
+                .filter(record -> !record.equals(EMPTY_STRING))
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    public List<CoronaData> findByProvinces(String province) {
+        return dataRepository.findByProvince(province);
+    }
+
+    public List<CoronaData> findByCountry(String country) {
+        return dataRepository.findByCountry(country);
     }
 }
