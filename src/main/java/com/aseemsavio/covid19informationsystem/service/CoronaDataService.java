@@ -179,11 +179,57 @@ public class CoronaDataService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Finds CoronaData by provinces
+     *
+     * @param province
+     * @return
+     */
     public List<CoronaData> findByProvinces(String province) {
         return dataRepository.findByProvince(province);
     }
 
+    /**
+     * Finds Corona data by country
+     *
+     * @param country
+     * @return
+     */
     public List<CoronaData> findByCountry(String country) {
         return dataRepository.findByCountry(country);
+    }
+
+    public List<CoronaDataExtra> findByProvinceCount(String province) {
+        List<CoronaData> data = dataRepository.findByProvince(province);
+        int size = data.size();
+        List<CoronaDataExtra> extra = data.stream().map(record -> {
+            CoronaDataExtra dataExtra = new CoronaDataExtra();
+            dataExtra.setDataId(record.getDataId());
+            dataExtra.setCountry(record.getCountry());
+            dataExtra.setProvince(record.getProvince());
+            dataExtra.setLatitude(record.getLatitude());
+            dataExtra.setLongitude(record.getLongitude());
+            dataExtra.setTodaysConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
+            dataExtra.setTodaysDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
+            return dataExtra;
+        }).collect(Collectors.toList());
+        return extra;
+    }
+
+    public List<CoronaDataExtra> findByCountryCount(String country) {
+        List<CoronaData> data = dataRepository.findByCountry(country);
+        int size = data.size();
+        List<CoronaDataExtra> extra = data.stream().map(record -> {
+            CoronaDataExtra dataExtra = new CoronaDataExtra();
+            dataExtra.setDataId(record.getDataId());
+            dataExtra.setCountry(record.getCountry());
+            dataExtra.setProvince(record.getProvince());
+            dataExtra.setLatitude(record.getLatitude());
+            dataExtra.setLongitude(record.getLongitude());
+            dataExtra.setTodaysConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
+            dataExtra.setTodaysDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
+            return dataExtra;
+        }).collect(Collectors.toList());
+        return extra;
     }
 }
