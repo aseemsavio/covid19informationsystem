@@ -62,47 +62,52 @@ public class TrafficControlFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        Enumeration<String> headers = httpRequest.getHeaderNames();
-        String authorizationCode = EMPTY_STRING;
-        boolean canProceed = false;
-        if (headers != null) {
-            String header = EMPTY_STRING;
-            while (headers.hasMoreElements()) {
-                header = headers.nextElement();
-                if (header.equals(HEADER_AUTHORIZATION_CODE)) {
-                    canProceed = true;
-                    break;
-                }
-            }
-            if (canProceed) {
-                LocalCache localCache = LocalCache.getInstance();
-                authorizationCode = httpRequest.getHeader(header);
+        String uri = EMPTY_STRING;
+        if (request instanceof HttpServletRequest) {
+            uri = ((HttpServletRequest) request).getRequestURI();
+        }
 
-                if (!isAuthorizationCodeValid(authorizationCode, localCache)) {
-                    FilterErrorResponse errorResponse = getErrorResponse(ERROR_CODE_NOT_A_REGISTERED_USER, ERROR_MSG_NOT_A_REGISTERED_USER);
+        if (uri.contains("/api/")) {
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            Enumeration<String> headers = httpRequest.getHeaderNames();
+            String authorizationCode = EMPTY_STRING;
+            boolean canProceed = false;
+            if (headers != null) {
+                String header = EMPTY_STRING;
+                while (headers.hasMoreElements()) {
+                    header = headers.nextElement();
+                    if (header.equals(HEADER_AUTHORIZATION_CODE)) {
+                        canProceed = true;
+                        break;
+                    }
+                }
+                if (canProceed) {
+                    LocalCache localCache = LocalCache.getInstance();
+                    authorizationCode = httpRequest.getHeader(header);
+
+                    if (!isAuthorizationCodeValid(authorizationCode, localCache)) {
+                        FilterErrorResponse errorResponse = getErrorResponse(ERROR_CODE_NOT_A_REGISTERED_USER, ERROR_MSG_NOT_A_REGISTERED_USER);
+                        sendServletResponse(response, errorResponse);
+                        return;
+                    }
+
+                    if (requestLimitExceeded(authorizationCode, localCache)) {
+                        FilterErrorResponse errorResponse = getErrorResponse(ERROR_CODE_LIMIT_EXCEEDED, ERROR_MSG_LIMIT_EXCEEDED);
+                        sendServletResponse(response, errorResponse);
+                        return;
+                    }
+
+                } else {
+                    FilterErrorResponse errorResponse = getErrorResponse(ERROR_CODE_HEADER_NOT_FOUND, ERROR_MSG_HEADER_NOT_FOUND);
                     sendServletResponse(response, errorResponse);
                     return;
                 }
-
-                if (requestLimitExceeded(authorizationCode, localCache)) {
-                    FilterErrorResponse errorResponse = getErrorResponse(ERROR_CODE_LIMIT_EXCEEDED, ERROR_MSG_LIMIT_EXCEEDED);
-                    sendServletResponse(response, errorResponse);
-                    return;
-                }
-
             } else {
                 FilterErrorResponse errorResponse = getErrorResponse(ERROR_CODE_HEADER_NOT_FOUND, ERROR_MSG_HEADER_NOT_FOUND);
                 sendServletResponse(response, errorResponse);
                 return;
             }
-        } else {
-            FilterErrorResponse errorResponse = getErrorResponse(ERROR_CODE_HEADER_NOT_FOUND, ERROR_MSG_HEADER_NOT_FOUND);
-            sendServletResponse(response, errorResponse);
-            return;
         }
-
-
         chain.doFilter(request, response);
     }
 
