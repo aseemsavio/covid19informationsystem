@@ -2,7 +2,9 @@ package com.aseemsavio.covid19informationsystem.service;
 
 import com.aseemsavio.covid19informationsystem.model.CoronaData;
 import com.aseemsavio.covid19informationsystem.model.CoronaDataExtra;
+import com.aseemsavio.covid19informationsystem.model.User;
 import com.aseemsavio.covid19informationsystem.repository.CoronaDataRepository;
+import com.aseemsavio.covid19informationsystem.repository.UserRepository;
 import com.aseemsavio.covid19informationsystem.utils.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +19,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.*;
+import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.COMMA;
+import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.EMPTY_STRING;
 import static com.aseemsavio.covid19informationsystem.utils.Type.CONFIRMED;
 import static com.aseemsavio.covid19informationsystem.utils.Type.DEATH;
 
@@ -31,6 +35,9 @@ public class CoronaDataService {
 
     @Autowired
     private CoronaDataRepository dataRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private static final Logger log = LoggerFactory.getLogger(CoronaDataService.class);
 
@@ -231,5 +238,22 @@ public class CoronaDataService {
             return dataExtra;
         }).collect(Collectors.toList());
         return extra;
+    }
+
+    public List<User> getAllUsers() {
+        log.info("Getting All Users from the Database...");
+        return userRepository.findAll();
+    }
+
+    public void updateUsersInCache(List<User> users) {
+        LocalCache localCache = LocalCache.getInstance();
+        Map<String, User> userMap = users.stream().collect(Collectors.toMap(User::getAuthorizationKey, user -> user));
+        localCache.setUsers(userMap);
+        log.info("Users Map updated successfully.");
+    }
+
+    public void deleteFromCollection(List<String> ids) {
+        dataRepository.deleteAllByDataId(ids);
+        log.info("Deleted old data from collection successfully.");
     }
 }

@@ -132,7 +132,7 @@ public class VersionOneController {
     private ResponseEntity<Response> getNotFoundErrorResponse(Response response) {
         response.setStatus(STATUS_FAILED);
         response.setTotalResults(0);
-        Error error = new Error(ERRORCODE_NOT_FOUND, ERROR_MSG_NOT_FOUND);
+        Error error = new Error(ERROR_CODE_NOT_FOUND, ERROR_MSG_NOT_FOUND);
         response.setErrors(Arrays.asList(error));
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
