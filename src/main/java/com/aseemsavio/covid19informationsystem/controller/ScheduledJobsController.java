@@ -3,6 +3,7 @@ package com.aseemsavio.covid19informationsystem.controller;
 import com.aseemsavio.covid19informationsystem.service.ScheduledJobs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.MalformedURLException;
@@ -29,6 +30,11 @@ public class ScheduledJobsController {
     @Scheduled(cron = "0 */1 * * *")
     public void updateCoronaDataToDatabase() throws MalformedURLException {
         scheduledJobs.updateCoronaDataInCache();
+    }
+
+    @GetMapping("/all/lub")
+    public String healthCheck() {
+        return "dub";
     }
 
 }
