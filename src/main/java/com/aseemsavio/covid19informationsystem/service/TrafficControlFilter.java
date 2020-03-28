@@ -63,12 +63,12 @@ public class TrafficControlFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         String uri = EMPTY_STRING;
-        if (request instanceof HttpServletRequest) {
-            uri = ((HttpServletRequest) request).getRequestURI();
-        }
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        if (httpRequest instanceof HttpServletRequest)
+            uri = httpRequest.getRequestURI();
 
         if (uri.contains("/api/")) {
-            HttpServletRequest httpRequest = (HttpServletRequest) request;
+
             Enumeration<String> headers = httpRequest.getHeaderNames();
             String authorizationCode = EMPTY_STRING;
             boolean canProceed = false;
@@ -143,7 +143,6 @@ public class TrafficControlFilter implements Filter {
             requests++;
             requestAllowedPerAuthorizationCode.put(authorizationCode, requests);
             return false;
-
         }
         return false;
     }
