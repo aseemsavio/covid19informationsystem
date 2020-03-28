@@ -123,7 +123,7 @@ public class CoronaDataService {
     public List<String> saveToCollection(List<CoronaData> coronaDataList) {
         log.info("Saving Data to Collection...");
         return dataRepository.saveAll(coronaDataList)
-                .stream().map(record -> record.getDataId())
+                .stream().map(record -> record.getId())
                 .collect(Collectors.toList());
     }
 
@@ -146,7 +146,7 @@ public class CoronaDataService {
         int size = data.size();
         List<CoronaDataExtra> extra = data.stream().map(record -> {
             CoronaDataExtra dataExtra = new CoronaDataExtra();
-            dataExtra.setDataId(record.getDataId());
+            dataExtra.setId(record.getId());
             dataExtra.setCountry(record.getCountry());
             dataExtra.setProvince(record.getProvince());
             dataExtra.setLatitude(record.getLatitude());
@@ -211,7 +211,7 @@ public class CoronaDataService {
         int size = data.size();
         List<CoronaDataExtra> extra = data.stream().map(record -> {
             CoronaDataExtra dataExtra = new CoronaDataExtra();
-            dataExtra.setDataId(record.getDataId());
+            dataExtra.setId(record.getId());
             dataExtra.setCountry(record.getCountry());
             dataExtra.setProvince(record.getProvince());
             dataExtra.setLatitude(record.getLatitude());
@@ -228,7 +228,7 @@ public class CoronaDataService {
         int size = data.size();
         List<CoronaDataExtra> extra = data.stream().map(record -> {
             CoronaDataExtra dataExtra = new CoronaDataExtra();
-            dataExtra.setDataId(record.getDataId());
+            dataExtra.setId(record.getId());
             dataExtra.setCountry(record.getCountry());
             dataExtra.setProvince(record.getProvince());
             dataExtra.setLatitude(record.getLatitude());
@@ -253,7 +253,9 @@ public class CoronaDataService {
     }
 
     public void deleteFromCollection(List<String> ids) {
-        dataRepository.deleteAllByDataId(ids);
+        for (String id : ids) {
+            dataRepository.deleteById(id);
+        }
         log.info("Deleted old data from collection successfully.");
     }
 }

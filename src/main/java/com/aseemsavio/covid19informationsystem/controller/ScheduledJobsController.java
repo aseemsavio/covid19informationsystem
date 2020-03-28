@@ -27,7 +27,8 @@ public class ScheduledJobsController {
      *
      * @throws MalformedURLException
      */
-    @Scheduled(cron = "0 0/59 * * * *")
+    //@Scheduled(cron = "0 0/59 * * * *")
+    @Scheduled(cron = "0 0/2 * * * *")
     public void updateCoronaDataToDatabase() throws MalformedURLException {
         scheduledJobs.updateCoronaDataInCache();
     }

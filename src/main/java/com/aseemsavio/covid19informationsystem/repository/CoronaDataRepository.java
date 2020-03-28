@@ -10,5 +10,4 @@ public interface CoronaDataRepository extends MongoRepository<CoronaData, String
 
     List<CoronaData> findByCountry(String country);
 
-    void deleteAllByDataId(List<String> ids);
 }
