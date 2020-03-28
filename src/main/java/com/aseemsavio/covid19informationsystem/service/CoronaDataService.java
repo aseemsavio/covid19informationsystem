@@ -56,7 +56,13 @@ public class CoronaDataService {
         List<CoronaData> coronaDataList = new ArrayList<>();
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()))) {
             while ((line = bufferedReader.readLine()) != null) {
-                if (!line.startsWith("Province")) {
+                if(line.startsWith("Province")) {
+                    List<String> strings = Arrays.asList(line.split(COMMA));
+                    LocalCache localCache = LocalCache.getInstance();
+                    localCache.setDates(strings.stream()
+                            .filter(record -> strings.indexOf(record) > 3)
+                            .collect(Collectors.toList()));
+                } else {
                     List<String> strings = Arrays.asList(line.split(COMMA));
                     int length = strings.size();
                     CoronaData data = new CoronaData();
