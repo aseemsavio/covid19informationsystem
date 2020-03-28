@@ -12,7 +12,7 @@ public class CoronaData {
 
     @Id
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String dataId;
+    private String id;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String province;
@@ -32,12 +32,12 @@ public class CoronaData {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Long> deathCount;
 
-    public String getDataId() {
-        return dataId;
+    public String getId() {
+        return id;
     }
 
-    public void setDataId(String dataId) {
-        this.dataId = dataId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getProvince() {
@@ -91,7 +91,7 @@ public class CoronaData {
     @Override
     public String toString() {
         return "CoronaData{" +
-                "dataId='" + dataId + '\'' +
+                "id='" + id + '\'' +
                 ", province='" + province + '\'' +
                 ", country='" + country + '\'' +
                 ", latitude=" + latitude +
