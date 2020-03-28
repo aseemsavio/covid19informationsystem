@@ -20,13 +20,13 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "company")
     private String company;
 
-    @Column(name = "authorization_key")
+    @Column(name = "authorization_key", unique = true)
     private String authorizationKey;
 
     @Column(name = "active")
