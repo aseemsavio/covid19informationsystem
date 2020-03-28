@@ -24,6 +24,7 @@ public class LocalCache {
 
     private Map<String, User> users;
     private List<String> idsOfMongoData;
+    private List<String> dates;
 
     public Map<String, User> getUsers() {
         return users;
@@ -39,5 +40,13 @@ public class LocalCache {
 
     public void setIdsOfMongoData(List<String> idsOfMongoData) {
         this.idsOfMongoData = idsOfMongoData;
+    }
+
+    public List<String> getDates() {
+        return dates;
+    }
+
+    public void setDates(List<String> dates) {
+        this.dates = dates;
     }
 }

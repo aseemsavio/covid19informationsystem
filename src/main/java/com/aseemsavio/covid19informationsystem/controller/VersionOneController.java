@@ -5,6 +5,7 @@ import com.aseemsavio.covid19informationsystem.model.CoronaDataExtra;
 import com.aseemsavio.covid19informationsystem.model.Error;
 import com.aseemsavio.covid19informationsystem.model.Response;
 import com.aseemsavio.covid19informationsystem.service.CoronaDataService;
+import com.aseemsavio.covid19informationsystem.service.LocalCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,8 @@ public class VersionOneController {
         if (data == null || data.size() == 0) {
             return getNotFoundErrorResponse(response);
         }
+        LocalCache localCache = LocalCache.getInstance();
+        response.setDates(localCache.getDates());
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         response.setTimeSeriesData(data);
@@ -84,6 +87,8 @@ public class VersionOneController {
         if (data == null || data.size() == 0) {
             return getNotFoundErrorResponse(response);
         }
+        LocalCache localCache = LocalCache.getInstance();
+        response.setDates(localCache.getDates());
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         response.setTimeSeriesData(data);
@@ -97,6 +102,8 @@ public class VersionOneController {
         if (data == null || data.size() == 0) {
             return getNotFoundErrorResponse(response);
         }
+        LocalCache localCache = LocalCache.getInstance();
+        response.setDates(localCache.getDates());
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         response.setTimeSeriesData(data);

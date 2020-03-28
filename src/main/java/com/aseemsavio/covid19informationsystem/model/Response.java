@@ -14,6 +14,9 @@ public class Response {
     private int totalResults;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<String> dates;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<CoronaData> timeSeriesData;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -42,6 +45,14 @@ public class Response {
 
     public void setTotalResults(int totalResults) {
         this.totalResults = totalResults;
+    }
+
+    public List<String> getDates() {
+        return dates;
+    }
+
+    public void setDates(List<String> dates) {
+        this.dates = dates;
     }
 
     public List<CoronaData> getTimeSeriesData() {
@@ -89,6 +100,7 @@ public class Response {
         return "Response{" +
                 "status='" + status + '\'' +
                 ", totalResults=" + totalResults +
+                ", dates=" + dates +
                 ", timeSeriesData=" + timeSeriesData +
                 ", countData=" + countData +
                 ", provinces=" + provinces +
