@@ -32,6 +32,9 @@ public class CoronaData {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Long> deathCount;
 
+    /*@JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<Long> recoveredCount;*/
+
     public String getId() {
         return id;
     }
@@ -88,6 +91,14 @@ public class CoronaData {
         this.deathCount = deathCount;
     }
 
+   /* public List<Long> getRecoveredCount() {
+        return recoveredCount;
+    }
+
+    public void setRecoveredCount(List<Long> recoveredCount) {
+        this.recoveredCount = recoveredCount;
+    }*/
+
     @Override
     public String toString() {
         return "CoronaData{" +
@@ -98,6 +109,7 @@ public class CoronaData {
                 ", longitude=" + longitude +
                 ", confirmedCount=" + confirmedCount +
                 ", deathCount=" + deathCount +
+               // ", recoveredCount=" + recoveredCount +
                 '}';
     }
 }

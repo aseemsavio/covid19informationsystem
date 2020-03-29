@@ -11,6 +11,9 @@ public class CoronaDataExtra extends CoronaData {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private long todaysDeaths;
 
+    /*@JsonInclude(JsonInclude.Include.NON_NULL)
+    private long todaysRecovered;*/
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String lastUpdated;
 
@@ -30,6 +33,14 @@ public class CoronaDataExtra extends CoronaData {
         this.todaysDeaths = todaysDeaths;
     }
 
+    /*public long getTodaysRecovered() {
+        return todaysRecovered;
+    }
+
+    public void setTodaysRecovered(long todaysRecovered) {
+        this.todaysRecovered = todaysRecovered;
+    }
+*/
     public String getLastUpdated() {
         return lastUpdated;
     }
@@ -43,6 +54,7 @@ public class CoronaDataExtra extends CoronaData {
         return "CoronaDataExtra{" +
                 "todaysConfirmed=" + todaysConfirmed +
                 ", todaysDeaths=" + todaysDeaths +
+             //   ", todaysRecovered=" + todaysRecovered +
                 ", lastUpdated='" + lastUpdated + '\'' +
                 '}';
     }

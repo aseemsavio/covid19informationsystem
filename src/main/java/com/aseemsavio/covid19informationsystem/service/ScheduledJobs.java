@@ -9,10 +9,8 @@ import org.springframework.stereotype.Service;
 import java.net.MalformedURLException;
 import java.util.List;
 
-import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.CONFIRMED_FILE_NAME;
-import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.DEATH_FILE_NAME;
-import static com.aseemsavio.covid19informationsystem.utils.Type.CONFIRMED;
-import static com.aseemsavio.covid19informationsystem.utils.Type.DEATH;
+import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.*;
+import static com.aseemsavio.covid19informationsystem.utils.Type.*;
 
 @Service
 public class ScheduledJobs {
@@ -31,6 +29,7 @@ public class ScheduledJobs {
         long start = System.currentTimeMillis();
         List<CoronaData> coronaDataList = dataService.readCSV(CONFIRMED_FILE_NAME, CONFIRMED);
         coronaDataList = dataService.editExistingList(coronaDataList, DEATH_FILE_NAME, DEATH);
+        coronaDataList = dataService.editExistingList(coronaDataList, RECOVERED_FILE_NAME, RECOVERED);
         LocalCache localCache = LocalCache.getInstance();
         List<String> newlyAddedData = dataService.saveToCollection(coronaDataList);
         dataService.deleteFromCollection(localCache.getIdsOfMongoData());

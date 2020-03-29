@@ -24,8 +24,7 @@ import java.util.stream.Collectors;
 
 import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.COMMA;
 import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.EMPTY_STRING;
-import static com.aseemsavio.covid19informationsystem.utils.Type.CONFIRMED;
-import static com.aseemsavio.covid19informationsystem.utils.Type.DEATH;
+import static com.aseemsavio.covid19informationsystem.utils.Type.*;
 
 @Service
 public class CoronaDataService {
@@ -81,7 +80,12 @@ public class CoronaDataService {
                                     .filter(record -> strings.indexOf(record) > 3)
                                     .map(record -> Long.parseLong(record))
                                     .collect(Collectors.toList()));
-                        }
+                        } /*else if (type.equals(RECOVERED)) {
+                            data.setRecoveredCount(strings.stream()
+                                    .filter(record -> strings.indexOf(record) > 3)
+                                    .map(record -> Long.parseLong(record))
+                                    .collect(Collectors.toList()));
+                        }*/
                         coronaDataList.add(data);
                     } catch (Exception e) {
                         log.error("Exception occurred while parsing data for + " + strings.get(0) + " " + strings.get(1) + ": " + e);
@@ -114,9 +118,12 @@ public class CoronaDataService {
                         existingDataList.get(i).setDeathCount(newList.get(i).getDeathCount());
                     else if (type.equals(CONFIRMED))
                         existingDataList.get(i).setConfirmedCount(newList.get(i).getConfirmedCount());
+                    /*else if (type.equals(RECOVERED))
+                        existingDataList.get(i).setRecoveredCount(newList.get(i).getRecoveredCount());*/
                 }
             }
         }
+        log.info("Data: " + existingDataList);
         return existingDataList;
     }
 
@@ -159,6 +166,7 @@ public class CoronaDataService {
             dataExtra.setLongitude(record.getLongitude());
             dataExtra.setTodaysConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
             dataExtra.setTodaysDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
+            //dataExtra.setTodaysRecovered(record.getRecoveredCount().get(record.getRecoveredCount().size() - 1));
             return dataExtra;
         }).collect(Collectors.toList());
         return extra;
@@ -224,6 +232,7 @@ public class CoronaDataService {
             dataExtra.setLongitude(record.getLongitude());
             dataExtra.setTodaysConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
             dataExtra.setTodaysDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
+            //dataExtra.setTodaysRecovered(record.getRecoveredCount().get(record.getRecoveredCount().size() - 1));
             return dataExtra;
         }).collect(Collectors.toList());
         return extra;
@@ -241,6 +250,7 @@ public class CoronaDataService {
             dataExtra.setLongitude(record.getLongitude());
             dataExtra.setTodaysConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
             dataExtra.setTodaysDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
+            //dataExtra.setTodaysRecovered(record.getRecoveredCount().get(record.getRecoveredCount().size() - 1));
             return dataExtra;
         }).collect(Collectors.toList());
         return extra;

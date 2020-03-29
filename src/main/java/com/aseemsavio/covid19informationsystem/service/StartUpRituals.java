@@ -11,10 +11,8 @@ import javax.annotation.PostConstruct;
 import java.net.MalformedURLException;
 import java.util.List;
 
-import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.CONFIRMED_FILE_NAME;
-import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.DEATH_FILE_NAME;
-import static com.aseemsavio.covid19informationsystem.utils.Type.CONFIRMED;
-import static com.aseemsavio.covid19informationsystem.utils.Type.DEATH;
+import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.*;
+import static com.aseemsavio.covid19informationsystem.utils.Type.*;
 
 /**
  * Dude, execute this code on startup.
@@ -35,6 +33,7 @@ public class StartUpRituals {
         dataService.updateUsersInCache(dataService.getAllUsers());
         List<CoronaData> coronaDataList = dataService.readCSV(CONFIRMED_FILE_NAME, CONFIRMED);
         coronaDataList = dataService.editExistingList(coronaDataList, DEATH_FILE_NAME, DEATH);
+        coronaDataList = dataService.editExistingList(coronaDataList, RECOVERED_FILE_NAME, RECOVERED);
         LocalCache localCache = LocalCache.getInstance();
         localCache.setIdsOfMongoData(dataService.saveToCollection(coronaDataList));
         log.info("App Initiation Rituals Complete [" + (System.currentTimeMillis() - start) + "ms.] Ready to serve user requests.");
