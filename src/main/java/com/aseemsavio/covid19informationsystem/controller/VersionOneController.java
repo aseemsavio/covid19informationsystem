@@ -9,6 +9,7 @@ import com.aseemsavio.covid19informationsystem.service.LocalCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.*;
 
@@ -26,114 +28,122 @@ public class VersionOneController {
     @Autowired
     CoronaDataService coronaDataService;
 
+    @Async
     @GetMapping("/timeSeries")
-    public ResponseEntity<Response> findAllTimeSeries() {
+    public CompletableFuture<ResponseEntity<Response>> findAllTimeSeries() {
         List<CoronaData> data = coronaDataService.findAllData();
         Response response = new Response();
         if (data == null || data.size() == 0) {
-            return getNotFoundErrorResponse(response);
+            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
         LocalCache localCache = LocalCache.getInstance();
         response.setDates(localCache.getDates());
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         response.setTimeSeriesData(data);
-        return new ResponseEntity< >(response, HttpStatus.OK);
+        return CompletableFuture.completedFuture(new ResponseEntity< >(response, HttpStatus.OK));
     }
 
+    @Async
     @GetMapping("/count")
-    public ResponseEntity<Response> findAllCount() {
+    public CompletableFuture<ResponseEntity<Response>> findAllCount() {
         List<CoronaDataExtra> data = coronaDataService.findAllCount();
         Response response = new Response();
         if (data == null || data.size() == 0) {
-            return getNotFoundErrorResponse(response);
+            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         response.setCountData(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
     }
 
+    @Async
     @GetMapping("/provinces")
-    public ResponseEntity<Response> getAllProvinces() {
+    public CompletableFuture<ResponseEntity<Response>> getAllProvinces() {
         List<String> data = coronaDataService.findAllProvinces();
         Response response = new Response();
         if (data == null || data.size() == 0) {
-            return getNotFoundErrorResponse(response);
+            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         response.setProvinces(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
     }
 
+    @Async
     @GetMapping("/countries")
-    public ResponseEntity<Response> getAllCountries() {
+    public CompletableFuture<ResponseEntity<Response>> getAllCountries() {
         List<String> data = coronaDataService.findAllCountries();
         Response response = new Response();
         if (data == null || data.size() == 0) {
-            return getNotFoundErrorResponse(response);
+            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         response.setCountries(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
     }
 
+    @Async
     @GetMapping("/timeSeries/findByProvince")
-    public ResponseEntity<Response> getTimeSeriesByProvince(@RequestParam String province) {
+    public CompletableFuture<ResponseEntity<Response>> getTimeSeriesByProvince(@RequestParam String province) {
         List<CoronaData> data = coronaDataService.findByProvinces(province);
         Response response = new Response();
         if (data == null || data.size() == 0) {
-            return getNotFoundErrorResponse(response);
+            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
         LocalCache localCache = LocalCache.getInstance();
         response.setDates(localCache.getDates());
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         response.setTimeSeriesData(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
     }
 
+    @Async
     @GetMapping("/timeSeries/findByCountry")
-    public ResponseEntity<Response> getTimeSeriesByCountry(@RequestParam String country) {
+    public CompletableFuture<ResponseEntity<Response>> getTimeSeriesByCountry(@RequestParam String country) {
         List<CoronaData> data = coronaDataService.findByCountry(country);
         Response response = new Response();
         if (data == null || data.size() == 0) {
-            return getNotFoundErrorResponse(response);
+            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
         LocalCache localCache = LocalCache.getInstance();
         response.setDates(localCache.getDates());
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         response.setTimeSeriesData(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return CompletableFuture.completedFuture(new ResponseEntity< >(response, HttpStatus.OK));
     }
 
+    @Async
     @GetMapping("/count/findByProvince")
-    public ResponseEntity<Response> getCountByProvince(@RequestParam String province) {
+    public CompletableFuture<ResponseEntity<Response>> getCountByProvince(@RequestParam String province) {
         List<CoronaDataExtra> data = coronaDataService.findByProvinceCount(province);
         Response response = new Response();
         if (data == null || data.size() == 0) {
-            return getNotFoundErrorResponse(response);
+            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         response.setCountData(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
     }
 
+    @Async
     @GetMapping("/count/findByCountry")
-    public ResponseEntity<Response> getCountByCountry(@RequestParam String country) {
+    public CompletableFuture<ResponseEntity<Response>> getCountByCountry(@RequestParam String country) {
         List<CoronaDataExtra> data = coronaDataService.findByCountryCount(country);
         Response response = new Response();
         if (data == null || data.size() == 0) {
-            return getNotFoundErrorResponse(response);
+            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         response.setCountData(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
     }
 
     private ResponseEntity<Response> getNotFoundErrorResponse(Response response) {
