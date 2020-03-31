@@ -124,7 +124,6 @@ public class CoronaDataService {
                 }
             }
         }
-        log.info("Data: " + existingDataList);
         return existingDataList;
     }
 
@@ -172,8 +171,8 @@ public class CoronaDataService {
             else dataExtra.setProvince(record.getProvince());
             dataExtra.setLatitude(record.getLatitude());
             dataExtra.setLongitude(record.getLongitude());
-            dataExtra.setTodaysConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
-            dataExtra.setTodaysDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
+            dataExtra.setTotalConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
+            dataExtra.setTotalDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
             //dataExtra.setTodaysRecovered(record.getRecoveredCount().get(record.getRecoveredCount().size() - 1));
             return dataExtra;
         }).collect(Collectors.toList());
@@ -239,8 +238,8 @@ public class CoronaDataService {
             else dataExtra.setProvince(record.getProvince());
             dataExtra.setLatitude(record.getLatitude());
             dataExtra.setLongitude(record.getLongitude());
-            dataExtra.setTodaysConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
-            dataExtra.setTodaysDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
+            dataExtra.setTotalConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
+            dataExtra.setTotalDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
             //dataExtra.setTodaysRecovered(record.getRecoveredCount().get(record.getRecoveredCount().size() - 1));
             return dataExtra;
         }).collect(Collectors.toList());
@@ -261,8 +260,8 @@ public class CoronaDataService {
             coronaCount.setConfirmedCount(coronaCount.getConfirmedCount() + datum.getConfirmedCount().get(datum.getConfirmedCount().size() - 1));
             coronaCount.setDeathCount(coronaCount.getDeathCount() + datum.getDeathCount().get(datum.getDeathCount().size() - 1));
         });
-        dataExtra.setTodaysConfirmed(coronaCount.getConfirmedCount());
-        dataExtra.setTodaysDeaths(coronaCount.getDeathCount());
+        dataExtra.setTotalConfirmed(coronaCount.getConfirmedCount());
+        dataExtra.setTotalDeaths(coronaCount.getDeathCount());
         return Arrays.asList(dataExtra);
     }
 

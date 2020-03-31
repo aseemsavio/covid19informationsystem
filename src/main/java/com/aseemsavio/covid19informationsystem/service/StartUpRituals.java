@@ -1,7 +1,6 @@
 package com.aseemsavio.covid19informationsystem.service;
 
 import com.aseemsavio.covid19informationsystem.model.CoronaData;
-import com.aseemsavio.covid19informationsystem.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,8 @@ public class StartUpRituals {
         coronaDataList = dataService.editExistingList(coronaDataList, RECOVERED_FILE_NAME, RECOVERED);
         LocalCache localCache = LocalCache.getInstance();
         localCache.setIdsOfMongoData(dataService.saveToCollection(coronaDataList));
-        log.info("App Initiation Rituals Complete [" + (System.currentTimeMillis() - start) + "ms.] Ready to serve user requests.");
+        localCache.setLastUpdatedMilliSeconds(System.currentTimeMillis());
+        log.info("App Initiation Rituals Complete in " + (System.currentTimeMillis() - start) + "ms.");
     }
 
 }

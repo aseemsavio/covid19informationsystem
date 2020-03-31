@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.*;
 
@@ -40,6 +41,7 @@ public class VersionOneController {
         response.setDates(localCache.getDates());
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
+        response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
         response.setTimeSeriesData(data);
         return CompletableFuture.completedFuture(new ResponseEntity< >(response, HttpStatus.OK));
     }
@@ -54,6 +56,8 @@ public class VersionOneController {
         }
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
+        LocalCache localCache = LocalCache.getInstance();
+        response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
         response.setCountData(data);
         return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
     }
@@ -68,6 +72,8 @@ public class VersionOneController {
         }
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
+        LocalCache localCache = LocalCache.getInstance();
+        response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
         response.setProvinces(data);
         return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
     }
@@ -82,6 +88,8 @@ public class VersionOneController {
         }
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
+        LocalCache localCache = LocalCache.getInstance();
+        response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
         response.setCountries(data);
         return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
     }
@@ -98,6 +106,7 @@ public class VersionOneController {
         response.setDates(localCache.getDates());
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
+        response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
         response.setTimeSeriesData(data);
         return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
     }
@@ -114,6 +123,7 @@ public class VersionOneController {
         response.setDates(localCache.getDates());
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
+        response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
         response.setTimeSeriesData(data);
         return CompletableFuture.completedFuture(new ResponseEntity< >(response, HttpStatus.OK));
     }
@@ -128,6 +138,8 @@ public class VersionOneController {
         }
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
+        LocalCache localCache = LocalCache.getInstance();
+        response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
         response.setCountData(data);
         return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
     }
@@ -142,6 +154,8 @@ public class VersionOneController {
         }
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
+        LocalCache localCache = LocalCache.getInstance();
+        response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
         response.setCountData(data);
         return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
     }

@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class CoronaDataExtra extends CoronaData {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private long todaysConfirmed;
+    private long totalConfirmed;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private long todaysDeaths;
+    private long totalDeaths;
 
     /*@JsonInclude(JsonInclude.Include.NON_NULL)
     private long todaysRecovered;*/
@@ -17,20 +17,20 @@ public class CoronaDataExtra extends CoronaData {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String lastUpdated;
 
-    public long getTodaysConfirmed() {
-        return todaysConfirmed;
+    public long getTotalConfirmed() {
+        return totalConfirmed;
     }
 
-    public void setTodaysConfirmed(long todaysConfirmed) {
-        this.todaysConfirmed = todaysConfirmed;
+    public void setTotalConfirmed(long totalConfirmed) {
+        this.totalConfirmed = totalConfirmed;
     }
 
-    public long getTodaysDeaths() {
-        return todaysDeaths;
+    public long getTotalDeaths() {
+        return totalDeaths;
     }
 
-    public void setTodaysDeaths(long todaysDeaths) {
-        this.todaysDeaths = todaysDeaths;
+    public void setTotalDeaths(long totalDeaths) {
+        this.totalDeaths = totalDeaths;
     }
 
     /*public long getTodaysRecovered() {
@@ -52,8 +52,8 @@ public class CoronaDataExtra extends CoronaData {
     @Override
     public String toString() {
         return "CoronaDataExtra{" +
-                "todaysConfirmed=" + todaysConfirmed +
-                ", todaysDeaths=" + todaysDeaths +
+                "totalConfirmed=" + totalConfirmed +
+                ", totalDeaths=" + totalDeaths +
              //   ", todaysRecovered=" + todaysRecovered +
                 ", lastUpdated='" + lastUpdated + '\'' +
                 '}';
