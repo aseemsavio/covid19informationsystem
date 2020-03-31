@@ -14,6 +14,9 @@ public class Response {
     private int totalResults;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private long lastUpdatedMinutes;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<String> dates;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -87,6 +90,14 @@ public class Response {
         this.countries = countries;
     }
 
+    public long getLastUpdatedMinutes() {
+        return lastUpdatedMinutes;
+    }
+
+    public void setLastUpdatedMinutes(long lastUpdatedMinutes) {
+        this.lastUpdatedMinutes = lastUpdatedMinutes;
+    }
+
     public List<Error> getErrors() {
         return errors;
     }
@@ -105,6 +116,7 @@ public class Response {
                 ", countData=" + countData +
                 ", provinces=" + provinces +
                 ", countries=" + countries +
+                ", lastUpdatedMinutes=" + lastUpdatedMinutes +
                 ", errors=" + errors +
                 '}';
     }

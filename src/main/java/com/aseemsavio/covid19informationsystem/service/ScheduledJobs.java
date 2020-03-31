@@ -34,7 +34,7 @@ public class ScheduledJobs {
         List<String> newlyAddedData = dataService.saveToCollection(coronaDataList);
         dataService.deleteFromCollection(localCache.getIdsOfMongoData());
         localCache.setIdsOfMongoData(newlyAddedData);
-        log.info("New Data: " + newlyAddedData.toString());
+        localCache.setLastUpdatedMilliSeconds(System.currentTimeMillis());
         log.info("Scheduled Update Corona Data to Collection Successfully completed in " + (System.currentTimeMillis() - start) + "ms.");
     }
 

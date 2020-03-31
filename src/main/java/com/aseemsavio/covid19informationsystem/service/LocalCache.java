@@ -25,6 +25,7 @@ public class LocalCache {
     private Map<String, User> users;
     private List<String> idsOfMongoData;
     private List<String> dates;
+    private long lastUpdatedMilliSeconds;
 
     public Map<String, User> getUsers() {
         return users;
@@ -48,5 +49,13 @@ public class LocalCache {
 
     public void setDates(List<String> dates) {
         this.dates = dates;
+    }
+
+    public long getLastUpdatedMilliSeconds() {
+        return lastUpdatedMilliSeconds;
+    }
+
+    public void setLastUpdatedMilliSeconds(long lastUpdatedMilliSeconds) {
+        this.lastUpdatedMilliSeconds = lastUpdatedMilliSeconds;
     }
 }
