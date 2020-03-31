@@ -1,5 +1,6 @@
 package com.aseemsavio.covid19informationsystem.service;
 
+import com.aseemsavio.covid19informationsystem.model.CoronaCount;
 import com.aseemsavio.covid19informationsystem.model.CoronaData;
 import com.aseemsavio.covid19informationsystem.model.CoronaDataExtra;
 import com.aseemsavio.covid19informationsystem.model.User;
@@ -146,7 +147,12 @@ public class CoronaDataService {
      * @return
      */
     public List<CoronaData> findAllData() {
-        return dataRepository.findAll();
+        return dataRepository.findAll().stream().map(record -> {
+            record.setId(null);
+            if (record.getProvince() == null || record.getProvince().equals(EMPTY_STRING))
+                record.setProvince(null);
+            return record;
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -159,9 +165,11 @@ public class CoronaDataService {
         int size = data.size();
         List<CoronaDataExtra> extra = data.stream().map(record -> {
             CoronaDataExtra dataExtra = new CoronaDataExtra();
-            dataExtra.setId(record.getId());
+            dataExtra.setId(null);
             dataExtra.setCountry(record.getCountry());
-            dataExtra.setProvince(record.getProvince());
+            if (record.getProvince() == null || record.getProvince().equals(EMPTY_STRING))
+                dataExtra.setProvince(null);
+            else dataExtra.setProvince(record.getProvince());
             dataExtra.setLatitude(record.getLatitude());
             dataExtra.setLongitude(record.getLongitude());
             dataExtra.setTodaysConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
@@ -222,12 +230,13 @@ public class CoronaDataService {
 
     public List<CoronaDataExtra> findByProvinceCount(String province) {
         List<CoronaData> data = dataRepository.findByProvince(province);
-        int size = data.size();
         List<CoronaDataExtra> extra = data.stream().map(record -> {
             CoronaDataExtra dataExtra = new CoronaDataExtra();
-            dataExtra.setId(record.getId());
+            dataExtra.setId(null);
             dataExtra.setCountry(record.getCountry());
-            dataExtra.setProvince(record.getProvince());
+            if (record.getProvince() == null || record.getProvince().equals(EMPTY_STRING))
+                dataExtra.setProvince(null);
+            else dataExtra.setProvince(record.getProvince());
             dataExtra.setLatitude(record.getLatitude());
             dataExtra.setLongitude(record.getLongitude());
             dataExtra.setTodaysConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
@@ -240,20 +249,21 @@ public class CoronaDataService {
 
     public List<CoronaDataExtra> findByCountryCount(String country) {
         List<CoronaData> data = dataRepository.findByCountry(country);
-        int size = data.size();
-        List<CoronaDataExtra> extra = data.stream().map(record -> {
-            CoronaDataExtra dataExtra = new CoronaDataExtra();
-            dataExtra.setId(record.getId());
-            dataExtra.setCountry(record.getCountry());
-            dataExtra.setProvince(record.getProvince());
-            dataExtra.setLatitude(record.getLatitude());
-            dataExtra.setLongitude(record.getLongitude());
-            dataExtra.setTodaysConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
-            dataExtra.setTodaysDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
-            //dataExtra.setTodaysRecovered(record.getRecoveredCount().get(record.getRecoveredCount().size() - 1));
-            return dataExtra;
-        }).collect(Collectors.toList());
-        return extra;
+
+        CoronaDataExtra dataExtra = new CoronaDataExtra();
+        dataExtra.setId(null);
+        dataExtra.setCountry(data.get(0).getCountry());
+        dataExtra.setProvince(null);
+        dataExtra.setLatitude(data.get(0).getLatitude());
+        dataExtra.setLongitude(data.get(0).getLongitude());
+        CoronaCount coronaCount = new CoronaCount();
+        data.stream().forEach(datum -> {
+            coronaCount.setConfirmedCount(coronaCount.getConfirmedCount() + datum.getConfirmedCount().get(datum.getConfirmedCount().size() - 1));
+            coronaCount.setDeathCount(coronaCount.getDeathCount() + datum.getDeathCount().get(datum.getDeathCount().size() - 1));
+        });
+        dataExtra.setTodaysConfirmed(coronaCount.getConfirmedCount());
+        dataExtra.setTodaysDeaths(coronaCount.getDeathCount());
+        return Arrays.asList(dataExtra);
     }
 
     public List<User> getAllUsers() {
