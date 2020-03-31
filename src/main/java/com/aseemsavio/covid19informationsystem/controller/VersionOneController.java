@@ -32,9 +32,11 @@ public class VersionOneController {
     @Async
     @GetMapping("/timeSeries")
     public CompletableFuture<ResponseEntity<Response>> findAllTimeSeries() {
-        List<CoronaData> data = coronaDataService.findAllData();
+        List<CoronaData> data = null;
         Response response = new Response();
-        if (data == null || data.size() == 0) {
+        try {
+            data = coronaDataService.findAllData();
+        } catch (Exception e) {
             return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
         LocalCache localCache = LocalCache.getInstance();
@@ -49,14 +51,16 @@ public class VersionOneController {
     @Async
     @GetMapping("/count")
     public CompletableFuture<ResponseEntity<Response>> findAllCount() {
-        List<CoronaDataExtra> data = coronaDataService.findAllCount();
+        List<CoronaDataExtra> data = null;
         Response response = new Response();
-        if (data == null || data.size() == 0) {
+        try {
+            data = coronaDataService.findAllCount();
+        } catch (Exception e) {
             return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
+        LocalCache localCache = LocalCache.getInstance();
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
-        LocalCache localCache = LocalCache.getInstance();
         response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
         response.setCountData(data);
         return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
@@ -65,14 +69,16 @@ public class VersionOneController {
     @Async
     @GetMapping("/provinces")
     public CompletableFuture<ResponseEntity<Response>> getAllProvinces() {
-        List<String> data = coronaDataService.findAllProvinces();
+        List<String> data = null;
         Response response = new Response();
-        if (data == null || data.size() == 0) {
+        try {
+            data = coronaDataService.findAllProvinces();
+        } catch (Exception e) {
             return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
+        LocalCache localCache = LocalCache.getInstance();
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
-        LocalCache localCache = LocalCache.getInstance();
         response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
         response.setProvinces(data);
         return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
@@ -81,9 +87,11 @@ public class VersionOneController {
     @Async
     @GetMapping("/countries")
     public CompletableFuture<ResponseEntity<Response>> getAllCountries() {
-        List<String> data = coronaDataService.findAllCountries();
+        List<String> data = null;
         Response response = new Response();
-        if (data == null || data.size() == 0) {
+        try {
+            data = coronaDataService.findAllCountries();
+        } catch (Exception e) {
             return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
         response.setStatus(STATUS_OK);
@@ -114,10 +122,15 @@ public class VersionOneController {
     @Async
     @GetMapping("/timeSeries/findByCountry")
     public CompletableFuture<ResponseEntity<Response>> getTimeSeriesByCountry(@RequestParam String country) {
-        List<CoronaData> data = coronaDataService.findByCountry(country);
+        List<CoronaData> data = null;
         Response response = new Response();
-        if (data == null || data.size() == 0) {
+        try {
+            data = coronaDataService.findByCountry(country);
+        } catch (Exception e) {
             return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
+        }
+        if (data == null || data.size() == 0) {
+
         }
         LocalCache localCache = LocalCache.getInstance();
         response.setDates(localCache.getDates());
@@ -131,8 +144,13 @@ public class VersionOneController {
     @Async
     @GetMapping("/count/findByProvince")
     public CompletableFuture<ResponseEntity<Response>> getCountByProvince(@RequestParam String province) {
-        List<CoronaDataExtra> data = coronaDataService.findByProvinceCount(province);
+        List<CoronaDataExtra> data = null;
         Response response = new Response();
+        try {
+            data = coronaDataService.findByProvinceCount(province);
+        } catch (Exception e) {
+            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
+        }
         if (data == null || data.size() == 0) {
             return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
@@ -147,8 +165,13 @@ public class VersionOneController {
     @Async
     @GetMapping("/count/findByCountry")
     public CompletableFuture<ResponseEntity<Response>> getCountByCountry(@RequestParam String country) {
-        List<CoronaDataExtra> data = coronaDataService.findByCountryCount(country);
+        List<CoronaDataExtra> data = null;
         Response response = new Response();
+        try {
+            data = coronaDataService.findByCountryCount(country);
+        } catch (Exception e) {
+            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
+        }
         if (data == null || data.size() == 0) {
             return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
         }
@@ -161,9 +184,11 @@ public class VersionOneController {
     }
 
     private ResponseEntity<Response> getNotFoundErrorResponse(Response response) {
+        LocalCache localCache = LocalCache.getInstance();
         response.setStatus(STATUS_FAILED);
         response.setTotalResults(0);
         Error error = new Error(ERROR_CODE_NOT_FOUND, ERROR_MSG_NOT_FOUND);
+        response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
         response.setErrors(Arrays.asList(error));
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
