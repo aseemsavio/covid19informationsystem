@@ -1,5 +1,7 @@
 package com.aseemsavio.covid19informationsystem.controller;
 
+import com.aseemsavio.covid19informationsystem.exceptions.CovidInvalidDataException;
+import com.aseemsavio.covid19informationsystem.exceptions.DataNotFoundException;
 import com.aseemsavio.covid19informationsystem.model.CoronaData;
 import com.aseemsavio.covid19informationsystem.model.CoronaDataExtra;
 import com.aseemsavio.covid19informationsystem.model.Error;
@@ -31,14 +33,10 @@ public class VersionOneController {
 
     @Async
     @GetMapping("/timeSeries")
-    public CompletableFuture<ResponseEntity<Response>> findAllTimeSeries() {
+    public CompletableFuture<ResponseEntity<Response>> findAllTimeSeries() throws DataNotFoundException {
         List<CoronaData> data = null;
         Response response = new Response();
-        try {
-            data = coronaDataService.findAllData();
-        } catch (Exception e) {
-            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
-        }
+        data = coronaDataService.findAllData();
         LocalCache localCache = LocalCache.getInstance();
         response.setDates(localCache.getDates());
         response.setStatus(STATUS_OK);
@@ -50,14 +48,10 @@ public class VersionOneController {
 
     @Async
     @GetMapping("/count")
-    public CompletableFuture<ResponseEntity<Response>> findAllCount() {
+    public CompletableFuture<ResponseEntity<Response>> findAllCount() throws DataNotFoundException {
         List<CoronaDataExtra> data = null;
         Response response = new Response();
-        try {
-            data = coronaDataService.findAllCount();
-        } catch (Exception e) {
-            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
-        }
+        data = coronaDataService.findAllCount();
         LocalCache localCache = LocalCache.getInstance();
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
@@ -68,14 +62,10 @@ public class VersionOneController {
 
     @Async
     @GetMapping("/provinces")
-    public CompletableFuture<ResponseEntity<Response>> getAllProvinces() {
+    public CompletableFuture<ResponseEntity<Response>> getAllProvinces() throws DataNotFoundException {
         List<String> data = null;
         Response response = new Response();
-        try {
-            data = coronaDataService.findAllProvinces();
-        } catch (Exception e) {
-            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
-        }
+        data = coronaDataService.findAllProvinces();
         LocalCache localCache = LocalCache.getInstance();
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
@@ -86,14 +76,10 @@ public class VersionOneController {
 
     @Async
     @GetMapping("/countries")
-    public CompletableFuture<ResponseEntity<Response>> getAllCountries() {
+    public CompletableFuture<ResponseEntity<Response>> getAllCountries() throws DataNotFoundException {
         List<String> data = null;
         Response response = new Response();
-        try {
-            data = coronaDataService.findAllCountries();
-        } catch (Exception e) {
-            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
-        }
+        data = coronaDataService.findAllCountries();
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         LocalCache localCache = LocalCache.getInstance();
@@ -104,12 +90,9 @@ public class VersionOneController {
 
     @Async
     @GetMapping("/timeSeries/findByProvince")
-    public CompletableFuture<ResponseEntity<Response>> getTimeSeriesByProvince(@RequestParam String province) {
+    public CompletableFuture<ResponseEntity<Response>> getTimeSeriesByProvince(@RequestParam String province) throws DataNotFoundException, CovidInvalidDataException {
         List<CoronaData> data = coronaDataService.findByProvinces(province);
         Response response = new Response();
-        if (data == null || data.size() == 0) {
-            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
-        }
         LocalCache localCache = LocalCache.getInstance();
         response.setDates(localCache.getDates());
         response.setStatus(STATUS_OK);
@@ -121,17 +104,10 @@ public class VersionOneController {
 
     @Async
     @GetMapping("/timeSeries/findByCountry")
-    public CompletableFuture<ResponseEntity<Response>> getTimeSeriesByCountry(@RequestParam String country) {
+    public CompletableFuture<ResponseEntity<Response>> getTimeSeriesByCountry(@RequestParam String country) throws DataNotFoundException, CovidInvalidDataException {
         List<CoronaData> data = null;
         Response response = new Response();
-        try {
-            data = coronaDataService.findByCountry(country);
-        } catch (Exception e) {
-            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
-        }
-        if (data == null || data.size() == 0) {
-
-        }
+        data = coronaDataService.findByCountry(country);
         LocalCache localCache = LocalCache.getInstance();
         response.setDates(localCache.getDates());
         response.setStatus(STATUS_OK);
@@ -143,17 +119,10 @@ public class VersionOneController {
 
     @Async
     @GetMapping("/count/findByProvince")
-    public CompletableFuture<ResponseEntity<Response>> getCountByProvince(@RequestParam String province) {
+    public CompletableFuture<ResponseEntity<Response>> getCountByProvince(@RequestParam String province) throws DataNotFoundException, CovidInvalidDataException {
         List<CoronaDataExtra> data = null;
+        data = coronaDataService.findByProvinceCount(province);
         Response response = new Response();
-        try {
-            data = coronaDataService.findByProvinceCount(province);
-        } catch (Exception e) {
-            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
-        }
-        if (data == null || data.size() == 0) {
-            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
-        }
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         LocalCache localCache = LocalCache.getInstance();
@@ -164,17 +133,10 @@ public class VersionOneController {
 
     @Async
     @GetMapping("/count/findByCountry")
-    public CompletableFuture<ResponseEntity<Response>> getCountByCountry(@RequestParam String country) {
+    public CompletableFuture<ResponseEntity<Response>> getCountByCountry(@RequestParam String country) throws CovidInvalidDataException, DataNotFoundException {
         List<CoronaDataExtra> data = null;
         Response response = new Response();
-        try {
-            data = coronaDataService.findByCountryCount(country);
-        } catch (Exception e) {
-            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
-        }
-        if (data == null || data.size() == 0) {
-            return CompletableFuture.completedFuture(getNotFoundErrorResponse(response));
-        }
+        data = coronaDataService.findByCountryCount(country);
         response.setStatus(STATUS_OK);
         response.setTotalResults(data.size());
         LocalCache localCache = LocalCache.getInstance();

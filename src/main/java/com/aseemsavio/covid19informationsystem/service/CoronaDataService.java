@@ -1,5 +1,7 @@
 package com.aseemsavio.covid19informationsystem.service;
 
+import com.aseemsavio.covid19informationsystem.exceptions.CovidInvalidDataException;
+import com.aseemsavio.covid19informationsystem.exceptions.DataNotFoundException;
 import com.aseemsavio.covid19informationsystem.model.CoronaCount;
 import com.aseemsavio.covid19informationsystem.model.CoronaData;
 import com.aseemsavio.covid19informationsystem.model.CoronaDataExtra;
@@ -145,13 +147,19 @@ public class CoronaDataService {
      *
      * @return
      */
-    public List<CoronaData> findAllData() {
-        return dataRepository.findAll().stream().map(record -> {
-            record.setId(null);
-            if (record.getProvince() == null || record.getProvince().equals(EMPTY_STRING))
-                record.setProvince(null);
-            return record;
-        }).collect(Collectors.toList());
+    public List<CoronaData> findAllData() throws DataNotFoundException {
+        List<CoronaData> data = null;
+        try {
+            data = dataRepository.findAll().stream().map(record -> {
+                record.setId(null);
+                if (record.getProvince() == null || record.getProvince().equals(EMPTY_STRING))
+                    record.setProvince(null);
+                return record;
+            }).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new DataNotFoundException();
+        }
+        return data;
     }
 
     /**
@@ -159,23 +167,28 @@ public class CoronaDataService {
      *
      * @return
      */
-    public List<CoronaDataExtra> findAllCount() {
-        List<CoronaData> data = dataRepository.findAll();
-        int size = data.size();
-        List<CoronaDataExtra> extra = data.stream().map(record -> {
-            CoronaDataExtra dataExtra = new CoronaDataExtra();
-            dataExtra.setId(null);
-            dataExtra.setCountry(record.getCountry());
-            if (record.getProvince() == null || record.getProvince().equals(EMPTY_STRING))
-                dataExtra.setProvince(null);
-            else dataExtra.setProvince(record.getProvince());
-            dataExtra.setLatitude(record.getLatitude());
-            dataExtra.setLongitude(record.getLongitude());
-            dataExtra.setTotalConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
-            dataExtra.setTotalDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
-            //dataExtra.setTodaysRecovered(record.getRecoveredCount().get(record.getRecoveredCount().size() - 1));
-            return dataExtra;
-        }).collect(Collectors.toList());
+    public List<CoronaDataExtra> findAllCount() throws DataNotFoundException {
+        List<CoronaDataExtra> extra = null;
+        try {
+            List<CoronaData> data = dataRepository.findAll();
+            int size = data.size();
+            extra = data.stream().map(record -> {
+                CoronaDataExtra dataExtra = new CoronaDataExtra();
+                dataExtra.setId(null);
+                dataExtra.setCountry(record.getCountry());
+                if (record.getProvince() == null || record.getProvince().equals(EMPTY_STRING))
+                    dataExtra.setProvince(null);
+                else dataExtra.setProvince(record.getProvince());
+                dataExtra.setLatitude(record.getLatitude());
+                dataExtra.setLongitude(record.getLongitude());
+                dataExtra.setTotalConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
+                dataExtra.setTotalDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
+                //dataExtra.setTodaysRecovered(record.getRecoveredCount().get(record.getRecoveredCount().size() - 1));
+                return dataExtra;
+            }).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new DataNotFoundException();
+        }
         return extra;
     }
 
@@ -184,13 +197,19 @@ public class CoronaDataService {
      *
      * @return
      */
-    public List<String> findAllProvinces() {
-        return dataRepository.findAll()
-                .stream()
-                .map(record -> record.getProvince() == null || record.getProvince().equals(EMPTY_STRING) ? EMPTY_STRING : record.getProvince())
-                .filter(record -> !record.equals(EMPTY_STRING))
-                .distinct()
-                .collect(Collectors.toList());
+    public List<String> findAllProvinces() throws DataNotFoundException {
+        List<String> data = null;
+        try {
+            data = dataRepository.findAll()
+                    .stream()
+                    .map(record -> record.getProvince() == null || record.getProvince().equals(EMPTY_STRING) ? EMPTY_STRING : record.getProvince())
+                    .filter(record -> !record.equals(EMPTY_STRING))
+                    .distinct()
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new DataNotFoundException();
+        }
+        return data;
     }
 
     /**
@@ -198,13 +217,19 @@ public class CoronaDataService {
      *
      * @return
      */
-    public List<String> findAllCountries() {
-        return dataRepository.findAll()
-                .stream()
-                .map(record -> record.getCountry() == null || record.getCountry().equals(EMPTY_STRING) ? EMPTY_STRING : record.getCountry())
-                .filter(record -> !record.equals(EMPTY_STRING))
-                .distinct()
-                .collect(Collectors.toList());
+    public List<String> findAllCountries() throws DataNotFoundException {
+        List<String> data = null;
+        try {
+            data = dataRepository.findAll()
+                    .stream()
+                    .map(record -> record.getCountry() == null || record.getCountry().equals(EMPTY_STRING) ? EMPTY_STRING : record.getCountry())
+                    .filter(record -> !record.equals(EMPTY_STRING))
+                    .distinct()
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new DataNotFoundException();
+        }
+        return data;
     }
 
     /**
@@ -213,8 +238,16 @@ public class CoronaDataService {
      * @param province
      * @return
      */
-    public List<CoronaData> findByProvinces(String province) {
-        return dataRepository.findByProvince(province);
+    public List<CoronaData> findByProvinces(String province) throws DataNotFoundException, CovidInvalidDataException {
+        List<CoronaData> data = null;
+        try {
+            data = dataRepository.findByProvince(province);
+        } catch (Exception e) {
+            throw new CovidInvalidDataException();
+        }
+        if (data == null || data.size() == 0)
+            throw new DataNotFoundException();
+        return data;
     }
 
     /**
@@ -223,12 +256,27 @@ public class CoronaDataService {
      * @param country
      * @return
      */
-    public List<CoronaData> findByCountry(String country) {
-        return dataRepository.findByCountry(country);
+    public List<CoronaData> findByCountry(String country) throws DataNotFoundException, CovidInvalidDataException {
+        List<CoronaData> data = null;
+        try {
+            data = dataRepository.findByCountry(country);
+        } catch (Exception e) {
+            throw new CovidInvalidDataException();
+        }
+        if (data != null && data.size() == 0)
+            throw new DataNotFoundException();
+        return data;
     }
 
-    public List<CoronaDataExtra> findByProvinceCount(String province) {
-        List<CoronaData> data = dataRepository.findByProvince(province);
+    public List<CoronaDataExtra> findByProvinceCount(String province) throws DataNotFoundException, CovidInvalidDataException {
+        List<CoronaData> data = null;
+        try {
+            data = dataRepository.findByProvince(province);
+        } catch(Exception e) {
+            throw new CovidInvalidDataException();
+        }
+        if (data == null || data.size() == 0)
+            throw new DataNotFoundException();
         List<CoronaDataExtra> extra = data.stream().map(record -> {
             CoronaDataExtra dataExtra = new CoronaDataExtra();
             dataExtra.setId(null);
@@ -246,22 +294,32 @@ public class CoronaDataService {
         return extra;
     }
 
-    public List<CoronaDataExtra> findByCountryCount(String country) {
-        List<CoronaData> data = dataRepository.findByCountry(country);
-
+    public List<CoronaDataExtra> findByCountryCount(String country) throws CovidInvalidDataException, DataNotFoundException {
+        List<CoronaData> data = null;
+        try {
+            data = dataRepository.findByCountry(country);
+        } catch (Exception e) {
+            throw new CovidInvalidDataException();
+        }
+        if (data == null || data.size() == 0)
+            throw new DataNotFoundException();
         CoronaDataExtra dataExtra = new CoronaDataExtra();
-        dataExtra.setId(null);
-        dataExtra.setCountry(data.get(0).getCountry());
-        dataExtra.setProvince(null);
-        dataExtra.setLatitude(data.get(0).getLatitude());
-        dataExtra.setLongitude(data.get(0).getLongitude());
-        CoronaCount coronaCount = new CoronaCount();
-        data.stream().forEach(datum -> {
-            coronaCount.setConfirmedCount(coronaCount.getConfirmedCount() + datum.getConfirmedCount().get(datum.getConfirmedCount().size() - 1));
-            coronaCount.setDeathCount(coronaCount.getDeathCount() + datum.getDeathCount().get(datum.getDeathCount().size() - 1));
-        });
-        dataExtra.setTotalConfirmed(coronaCount.getConfirmedCount());
-        dataExtra.setTotalDeaths(coronaCount.getDeathCount());
+        try {
+            dataExtra.setId(null);
+            dataExtra.setCountry(data.get(0).getCountry());
+            dataExtra.setProvince(null);
+            dataExtra.setLatitude(data.get(0).getLatitude());
+            dataExtra.setLongitude(data.get(0).getLongitude());
+            CoronaCount coronaCount = new CoronaCount();
+            data.stream().forEach(datum -> {
+                coronaCount.setConfirmedCount(coronaCount.getConfirmedCount() + datum.getConfirmedCount().get(datum.getConfirmedCount().size() - 1));
+                coronaCount.setDeathCount(coronaCount.getDeathCount() + datum.getDeathCount().get(datum.getDeathCount().size() - 1));
+            });
+            dataExtra.setTotalConfirmed(coronaCount.getConfirmedCount());
+            dataExtra.setTotalDeaths(coronaCount.getDeathCount());
+        } catch (Exception e) {
+            throw new CovidInvalidDataException();
+        }
         return Arrays.asList(dataExtra);
     }
 
