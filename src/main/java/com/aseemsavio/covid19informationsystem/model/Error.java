@@ -16,6 +16,7 @@ public class Error {
         this.errorMessage = errorMessage;
     }
 
+
     public int getErrorCode() {
         return errorCode;
     }
