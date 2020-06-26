@@ -24,9 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.COMMA;
-import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.EMPTY_STRING;
+import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.*;
 import static com.aseemsavio.covid19informationsystem.utils.Type.*;
 
 @Service
@@ -51,47 +51,46 @@ public class CoronaDataService {
      */
     public List<CoronaData> readCSV(String fileName, Type type) throws MalformedURLException {
         log.info("Parsing " + type.toString() + " data starts");
-        String fullURL = SOURCE_URL + fileName;
-        URL url = new URL(fullURL);
-        String line = EMPTY_STRING;
+        var fullURL = SOURCE_URL + fileName;
+        var url = new URL(fullURL);
+        var line = EMPTY_STRING;
 
         List<CoronaData> coronaDataList = new ArrayList<>();
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()))) {
             while ((line = bufferedReader.readLine()) != null) {
-                if(line.startsWith("Province")) {
+                if (line.startsWith(PROVINCE)) {
                     List<String> strings = Arrays.asList(line.split(COMMA));
                     LocalCache localCache = LocalCache.getInstance();
                     localCache.setDates(strings.stream()
-                            .filter(record -> strings.indexOf(record) > 3)
+                            .filter(record -> strings.indexOf(record) > THREE)
                             .collect(Collectors.toList()));
                 } else {
                     List<String> strings = Arrays.asList(line.split(COMMA));
-                    int length = strings.size();
                     CoronaData data = new CoronaData();
                     data.setProvince(strings.get(0));
                     data.setCountry(strings.get(1));
                     try {
-                        data.setLatitude(Double.parseDouble(strings.get(2)));
-                        data.setLongitude(Double.parseDouble(strings.get(3)));
+                        data.setLatitude(Double.parseDouble(strings.get(TWO)));
+                        data.setLongitude(Double.parseDouble(strings.get(THREE)));
                         if (type.equals(CONFIRMED)) {
                             data.setConfirmedCount(strings.stream()
-                                    .filter(record -> strings.indexOf(record) > 3)
-                                    .map(record -> Long.parseLong(record))
+                                    .filter(record -> strings.indexOf(record) > THREE)
+                                    .map(Long::parseLong)
                                     .collect(Collectors.toList()));
                         } else if (type.equals(DEATH)) {
                             data.setDeathCount(strings.stream()
-                                    .filter(record -> strings.indexOf(record) > 3)
-                                    .map(record -> Long.parseLong(record))
+                                    .filter(record -> strings.indexOf(record) > THREE)
+                                    .map(Long::parseLong)
                                     .collect(Collectors.toList()));
                         } /*else if (type.equals(RECOVERED)) {
                             data.setRecoveredCount(strings.stream()
-                                    .filter(record -> strings.indexOf(record) > 3)
+                                    .filter(record -> strings.indexOf(record) > THREE)
                                     .map(record -> Long.parseLong(record))
                                     .collect(Collectors.toList()));
                         }*/
                         coronaDataList.add(data);
                     } catch (Exception e) {
-                        log.error("Exception occurred while parsing data for + " + strings.get(0) + " " + strings.get(1) + ": " + e);
+                        log.error("Exception occurred while parsing data for + " + strings.get(ZERO) + " " + strings.get(ONE) + ": " + e);
                     }
                 }
             }
@@ -112,9 +111,9 @@ public class CoronaDataService {
      * @throws MalformedURLException
      */
     public List<CoronaData> editExistingList(List<CoronaData> existingDataList, String fileName, Type type) throws MalformedURLException {
-        List<CoronaData> newList = readCSV(fileName, type);
+        var newList = readCSV(fileName, type);
         if (existingDataList.size() == newList.size()) {
-            for (int i = 0; i < existingDataList.size(); i++) {
+            IntStream.iterate(ZERO, i -> (i < existingDataList.size()), i -> i + ONE).forEach(i -> {
                 if ((existingDataList.get(i).getCountry().equals(newList.get(i).getCountry())) &&
                         (existingDataList.get(i).getProvince().equals(newList.get(i).getProvince()))) {
                     if (type.equals(DEATH))
@@ -124,7 +123,18 @@ public class CoronaDataService {
                     /*else if (type.equals(RECOVERED))
                         existingDataList.get(i).setRecoveredCount(newList.get(i).getRecoveredCount());*/
                 }
-            }
+            });
+            /*for (int i = 0; i < existingDataList.size(); i++) {
+                if ((existingDataList.get(i).getCountry().equals(newList.get(i).getCountry())) &&
+                        (existingDataList.get(i).getProvince().equals(newList.get(i).getProvince()))) {
+                    if (type.equals(DEATH))
+                        existingDataList.get(i).setDeathCount(newList.get(i).getDeathCount());
+                    else if (type.equals(CONFIRMED))
+                        existingDataList.get(i).setConfirmedCount(newList.get(i).getConfirmedCount());
+                    *//*else if (type.equals(RECOVERED))
+                        existingDataList.get(i).setRecoveredCount(newList.get(i).getRecoveredCount());*//*
+                }
+            }*/
         }
         return existingDataList;
     }
@@ -138,7 +148,8 @@ public class CoronaDataService {
     public List<String> saveToCollection(List<CoronaData> coronaDataList) {
         log.info("Saving Data to Collection...");
         return dataRepository.saveAll(coronaDataList)
-                .stream().map(record -> record.getId())
+                .stream()
+                .map(CoronaData::getId)
                 .collect(Collectors.toList());
     }
 
@@ -148,14 +159,15 @@ public class CoronaDataService {
      * @return
      */
     public List<CoronaData> findAllData() throws DataNotFoundException {
-        List<CoronaData> data = null;
+        List<CoronaData> data;
         try {
-            data = dataRepository.findAll().stream().map(record -> {
-                record.setId(null);
-                if (record.getProvince() == null || record.getProvince().equals(EMPTY_STRING))
-                    record.setProvince(null);
-                return record;
-            }).collect(Collectors.toList());
+            data = dataRepository.findAll().
+                    stream().
+                    peek(record -> {
+                        record.setId(null);
+                        if (record.getProvince() == null || record.getProvince().equals(EMPTY_STRING))
+                            record.setProvince(null);
+                    }).collect(Collectors.toList());
         } catch (Exception e) {
             throw new DataNotFoundException();
         }
@@ -168,10 +180,9 @@ public class CoronaDataService {
      * @return
      */
     public List<CoronaDataExtra> findAllCount() throws DataNotFoundException {
-        List<CoronaDataExtra> extra = null;
+        List<CoronaDataExtra> extra;
         try {
-            List<CoronaData> data = dataRepository.findAll();
-            int size = data.size();
+            var data = dataRepository.findAll();
             extra = data.stream().map(record -> {
                 CoronaDataExtra dataExtra = new CoronaDataExtra();
                 dataExtra.setId(null);
@@ -198,7 +209,7 @@ public class CoronaDataService {
      * @return
      */
     public List<String> findAllProvinces() throws DataNotFoundException {
-        List<String> data = null;
+        List<String> data;
         try {
             data = dataRepository.findAll()
                     .stream()
@@ -218,7 +229,7 @@ public class CoronaDataService {
      * @return
      */
     public List<String> findAllCountries() throws DataNotFoundException {
-        List<String> data = null;
+        List<String> data;
         try {
             data = dataRepository.findAll()
                     .stream()
@@ -239,7 +250,7 @@ public class CoronaDataService {
      * @return
      */
     public List<CoronaData> findByProvinces(String province) throws DataNotFoundException, CovidInvalidDataException {
-        List<CoronaData> data = null;
+        List<CoronaData> data;
         try {
             data = dataRepository.findByProvince(province);
         } catch (Exception e) {
@@ -257,7 +268,7 @@ public class CoronaDataService {
      * @return
      */
     public List<CoronaData> findByCountry(String country) throws DataNotFoundException, CovidInvalidDataException {
-        List<CoronaData> data = null;
+        List<CoronaData> data;
         try {
             data = dataRepository.findByCountry(country);
         } catch (Exception e) {
@@ -269,15 +280,15 @@ public class CoronaDataService {
     }
 
     public List<CoronaDataExtra> findByProvinceCount(String province) throws DataNotFoundException, CovidInvalidDataException {
-        List<CoronaData> data = null;
+        List<CoronaData> data;
         try {
             data = dataRepository.findByProvince(province);
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new CovidInvalidDataException();
         }
         if (data == null || data.size() == 0)
             throw new DataNotFoundException();
-        List<CoronaDataExtra> extra = data.stream().map(record -> {
+        var extra = data.stream().map(record -> {
             CoronaDataExtra dataExtra = new CoronaDataExtra();
             dataExtra.setId(null);
             dataExtra.setCountry(record.getCountry());
@@ -295,7 +306,7 @@ public class CoronaDataService {
     }
 
     public List<CoronaDataExtra> findByCountryCount(String country) throws CovidInvalidDataException, DataNotFoundException {
-        List<CoronaData> data = null;
+        List<CoronaData> data;
         try {
             data = dataRepository.findByCountry(country);
         } catch (Exception e) {
@@ -303,7 +314,7 @@ public class CoronaDataService {
         }
         if (data == null || data.size() == 0)
             throw new DataNotFoundException();
-        CoronaDataExtra dataExtra = new CoronaDataExtra();
+        var dataExtra = new CoronaDataExtra();
         try {
             dataExtra.setId(null);
             dataExtra.setCountry(data.get(0).getCountry());
@@ -311,7 +322,7 @@ public class CoronaDataService {
             dataExtra.setLatitude(data.get(0).getLatitude());
             dataExtra.setLongitude(data.get(0).getLongitude());
             CoronaCount coronaCount = new CoronaCount();
-            data.stream().forEach(datum -> {
+            data.forEach(datum -> {
                 coronaCount.setConfirmedCount(coronaCount.getConfirmedCount() + datum.getConfirmedCount().get(datum.getConfirmedCount().size() - 1));
                 coronaCount.setDeathCount(coronaCount.getDeathCount() + datum.getDeathCount().get(datum.getDeathCount().size() - 1));
             });
@@ -320,7 +331,7 @@ public class CoronaDataService {
         } catch (Exception e) {
             throw new CovidInvalidDataException();
         }
-        return Arrays.asList(dataExtra);
+        return List.of(dataExtra);
     }
 
     public List<User> getAllUsers() {
@@ -329,8 +340,8 @@ public class CoronaDataService {
     }
 
     public void updateUsersInCache(List<User> users) {
-        LocalCache localCache = LocalCache.getInstance();
-        Map<String, User> userMap = users.stream().collect(Collectors.toMap(User::getAuthorizationKey, user -> user));
+        var localCache = LocalCache.getInstance();
+        var userMap = users.stream().collect(Collectors.toMap(User::getAuthorizationKey, user -> user));
         localCache.setUsers(userMap);
         log.info("Users Map updated successfully.");
     }
