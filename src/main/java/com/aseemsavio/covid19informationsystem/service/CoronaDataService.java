@@ -67,8 +67,8 @@ public class CoronaDataService {
                 } else {
                     List<String> strings = Arrays.asList(line.split(COMMA));
                     CoronaData data = new CoronaData();
-                    data.setProvince(strings.get(0));
-                    data.setCountry(strings.get(1));
+                    data.setProvince(strings.get(ZERO));
+                    data.setCountry(strings.get(ONE));
                     try {
                         data.setLatitude(Double.parseDouble(strings.get(TWO)));
                         data.setLongitude(Double.parseDouble(strings.get(THREE)));
@@ -192,8 +192,8 @@ public class CoronaDataService {
                 else dataExtra.setProvince(record.getProvince());
                 dataExtra.setLatitude(record.getLatitude());
                 dataExtra.setLongitude(record.getLongitude());
-                dataExtra.setTotalConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
-                dataExtra.setTotalDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
+                dataExtra.setTotalConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - ONE));
+                dataExtra.setTotalDeaths(record.getDeathCount().get(record.getDeathCount().size() - ONE));
                 //dataExtra.setTodaysRecovered(record.getRecoveredCount().get(record.getRecoveredCount().size() - 1));
                 return dataExtra;
             }).collect(Collectors.toList());
@@ -256,7 +256,7 @@ public class CoronaDataService {
         } catch (Exception e) {
             throw new CovidInvalidDataException();
         }
-        if (data == null || data.size() == 0)
+        if (data == null || data.size() == ZERO)
             throw new DataNotFoundException();
         return data;
     }
@@ -286,7 +286,7 @@ public class CoronaDataService {
         } catch (Exception e) {
             throw new CovidInvalidDataException();
         }
-        if (data == null || data.size() == 0)
+        if (data == null || data.size() == ZERO)
             throw new DataNotFoundException();
         var extra = data.stream().map(record -> {
             CoronaDataExtra dataExtra = new CoronaDataExtra();
@@ -297,8 +297,8 @@ public class CoronaDataService {
             else dataExtra.setProvince(record.getProvince());
             dataExtra.setLatitude(record.getLatitude());
             dataExtra.setLongitude(record.getLongitude());
-            dataExtra.setTotalConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - 1));
-            dataExtra.setTotalDeaths(record.getDeathCount().get(record.getDeathCount().size() - 1));
+            dataExtra.setTotalConfirmed(record.getConfirmedCount().get(record.getConfirmedCount().size() - ONE));
+            dataExtra.setTotalDeaths(record.getDeathCount().get(record.getDeathCount().size() - ONE));
             //dataExtra.setTodaysRecovered(record.getRecoveredCount().get(record.getRecoveredCount().size() - 1));
             return dataExtra;
         }).collect(Collectors.toList());
@@ -312,19 +312,19 @@ public class CoronaDataService {
         } catch (Exception e) {
             throw new CovidInvalidDataException();
         }
-        if (data == null || data.size() == 0)
+        if (data == null || data.size() == ZERO)
             throw new DataNotFoundException();
         var dataExtra = new CoronaDataExtra();
         try {
             dataExtra.setId(null);
-            dataExtra.setCountry(data.get(0).getCountry());
+            dataExtra.setCountry(data.get(ZERO).getCountry());
             dataExtra.setProvince(null);
-            dataExtra.setLatitude(data.get(0).getLatitude());
-            dataExtra.setLongitude(data.get(0).getLongitude());
+            dataExtra.setLatitude(data.get(ZERO).getLatitude());
+            dataExtra.setLongitude(data.get(ZERO).getLongitude());
             CoronaCount coronaCount = new CoronaCount();
             data.forEach(datum -> {
-                coronaCount.setConfirmedCount(coronaCount.getConfirmedCount() + datum.getConfirmedCount().get(datum.getConfirmedCount().size() - 1));
-                coronaCount.setDeathCount(coronaCount.getDeathCount() + datum.getDeathCount().get(datum.getDeathCount().size() - 1));
+                coronaCount.setConfirmedCount(coronaCount.getConfirmedCount() + datum.getConfirmedCount().get(datum.getConfirmedCount().size() - ONE));
+                coronaCount.setDeathCount(coronaCount.getDeathCount() + datum.getDeathCount().get(datum.getDeathCount().size() - ONE));
             });
             dataExtra.setTotalConfirmed(coronaCount.getConfirmedCount());
             dataExtra.setTotalDeaths(coronaCount.getDeathCount());
