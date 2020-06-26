@@ -2,6 +2,13 @@ package com.aseemsavio.covid19informationsystem.utils;
 
 public class C19ISConstants {
 
+    public static final String PROVINCE = "Province";
+
+    public static Integer ZERO = 0;
+    public static Integer ONE = 1;
+    public static Integer TWO = 2;
+    public static Integer THREE = 3;
+
     public static final String CONFIRMED_FILE_NAME = "time_series_covid19_confirmed_global.csv";
     public static final String DEATH_FILE_NAME = "time_series_covid19_deaths_global.csv";
     public static final String RECOVERED_FILE_NAME = "time_series_covid19_recovered_global.csv";
