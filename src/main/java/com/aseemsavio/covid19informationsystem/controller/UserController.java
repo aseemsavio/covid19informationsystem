@@ -4,21 +4,21 @@ import com.aseemsavio.covid19informationsystem.model.User;
 import com.aseemsavio.covid19informationsystem.model.UserRequest;
 import com.aseemsavio.covid19informationsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
+import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.*;
+
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = ADMIN)
 public class UserController {
 
     @Autowired
     UserService userService;
 
-    //@PostMapping(value = "/getAuthorizationCode")
+    @PutMapping(value = USER)
     public String getAuthorizationCode(@RequestBody UserRequest userRequest) {
         User user = new User();
         user.setActive(true);
@@ -30,5 +30,11 @@ public class UserController {
         user.setAuthorizationKey(UUID.randomUUID().toString());
         return userService.getAuthorizationCode(user);
     }
+
+    @GetMapping(value = USERS)
+    public List<User> getUsers() {
+        return userService.getUsers();
+    }
+
 
 }

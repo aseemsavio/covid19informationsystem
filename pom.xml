@@ -94,8 +94,10 @@
                 <version>2.12.4</version>
                 <configuration>
                     <skipTests>true</skipTests>
+                    <forkMode>always</forkMode>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 

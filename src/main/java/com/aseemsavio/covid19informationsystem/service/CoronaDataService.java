@@ -22,12 +22,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.*;
-import static com.aseemsavio.covid19informationsystem.utils.Type.*;
+import static com.aseemsavio.covid19informationsystem.utils.Type.CONFIRMED;
+import static com.aseemsavio.covid19informationsystem.utils.Type.DEATH;
 
 @Service
 public class CoronaDataService {
@@ -57,7 +57,7 @@ public class CoronaDataService {
 
         List<CoronaData> coronaDataList = new ArrayList<>();
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()))) {
-            while ((line = bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != NULL) {
                 if (line.startsWith(PROVINCE)) {
                     List<String> strings = Arrays.asList(line.split(COMMA));
                     LocalCache localCache = LocalCache.getInstance();
@@ -164,9 +164,9 @@ public class CoronaDataService {
             data = dataRepository.findAll().
                     stream().
                     peek(record -> {
-                        record.setId(null);
-                        if (record.getProvince() == null || record.getProvince().equals(EMPTY_STRING))
-                            record.setProvince(null);
+                        record.setId(NULL);
+                        if (record.getProvince() == NULL || record.getProvince().equals(EMPTY_STRING))
+                            record.setProvince(NULL);
                     }).collect(Collectors.toList());
         } catch (Exception e) {
             throw new DataNotFoundException();
@@ -185,10 +185,10 @@ public class CoronaDataService {
             var data = dataRepository.findAll();
             extra = data.stream().map(record -> {
                 CoronaDataExtra dataExtra = new CoronaDataExtra();
-                dataExtra.setId(null);
+                dataExtra.setId(NULL);
                 dataExtra.setCountry(record.getCountry());
-                if (record.getProvince() == null || record.getProvince().equals(EMPTY_STRING))
-                    dataExtra.setProvince(null);
+                if (record.getProvince() == NULL || record.getProvince().equals(EMPTY_STRING))
+                    dataExtra.setProvince(NULL);
                 else dataExtra.setProvince(record.getProvince());
                 dataExtra.setLatitude(record.getLatitude());
                 dataExtra.setLongitude(record.getLongitude());
@@ -213,7 +213,7 @@ public class CoronaDataService {
         try {
             data = dataRepository.findAll()
                     .stream()
-                    .map(record -> record.getProvince() == null || record.getProvince().equals(EMPTY_STRING) ? EMPTY_STRING : record.getProvince())
+                    .map(record -> record.getProvince() == NULL || record.getProvince().equals(EMPTY_STRING) ? EMPTY_STRING : record.getProvince())
                     .filter(record -> !record.equals(EMPTY_STRING))
                     .distinct()
                     .collect(Collectors.toList());
@@ -233,7 +233,7 @@ public class CoronaDataService {
         try {
             data = dataRepository.findAll()
                     .stream()
-                    .map(record -> record.getCountry() == null || record.getCountry().equals(EMPTY_STRING) ? EMPTY_STRING : record.getCountry())
+                    .map(record -> record.getCountry() == NULL || record.getCountry().equals(EMPTY_STRING) ? EMPTY_STRING : record.getCountry())
                     .filter(record -> !record.equals(EMPTY_STRING))
                     .distinct()
                     .collect(Collectors.toList());
@@ -290,10 +290,10 @@ public class CoronaDataService {
             throw new DataNotFoundException();
         var extra = data.stream().map(record -> {
             CoronaDataExtra dataExtra = new CoronaDataExtra();
-            dataExtra.setId(null);
+            dataExtra.setId(NULL);
             dataExtra.setCountry(record.getCountry());
-            if (record.getProvince() == null || record.getProvince().equals(EMPTY_STRING))
-                dataExtra.setProvince(null);
+            if (record.getProvince() == NULL || record.getProvince().equals(EMPTY_STRING))
+                dataExtra.setProvince(NULL);
             else dataExtra.setProvince(record.getProvince());
             dataExtra.setLatitude(record.getLatitude());
             dataExtra.setLongitude(record.getLongitude());
@@ -316,9 +316,9 @@ public class CoronaDataService {
             throw new DataNotFoundException();
         var dataExtra = new CoronaDataExtra();
         try {
-            dataExtra.setId(null);
+            dataExtra.setId(NULL);
             dataExtra.setCountry(data.get(ZERO).getCountry());
-            dataExtra.setProvince(null);
+            dataExtra.setProvince(NULL);
             dataExtra.setLatitude(data.get(ZERO).getLatitude());
             dataExtra.setLongitude(data.get(ZERO).getLongitude());
             CoronaCount coronaCount = new CoronaCount();
