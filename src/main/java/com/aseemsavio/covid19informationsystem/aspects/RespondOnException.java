@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +24,7 @@ public class RespondOnException extends ResponseEntityExceptionHandler {
         Response response = new Response();
         LocalCache localCache = LocalCache.getInstance();
         response.setStatus(STATUS_FAILED);
-        response.setTotalResults(0);
+        response.setTotalResults(ZERO);
         Error error = new Error(ERROR_CODE_NOT_FOUND, ERROR_MSG_NOT_FOUND);
         response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
         response.setErrors(List.of(error));
@@ -40,7 +39,7 @@ public class RespondOnException extends ResponseEntityExceptionHandler {
         response.setTotalResults(0);
         Error error = new Error(ERROR_CODE_COVID_ERROR, ERROR_MSG_COVID_ERROR);
         response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
-        response.setErrors(Arrays.asList(error));
+        response.setErrors(List.of(error));
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
