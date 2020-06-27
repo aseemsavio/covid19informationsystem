@@ -5,6 +5,8 @@ import com.aseemsavio.covid19informationsystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -25,5 +27,9 @@ public class UserService {
         } catch(Exception e) {
             return "Couldn't complete your request. Please try again later." + e;
         }
+    }
+
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 }

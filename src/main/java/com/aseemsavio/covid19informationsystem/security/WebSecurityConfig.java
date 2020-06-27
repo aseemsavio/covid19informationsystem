@@ -8,6 +8,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.ACTUATOR_SECURITY;
+import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.ADMIN_SECURITY;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -22,7 +25,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/actuator/*").authenticated()
+                .antMatchers(ACTUATOR_SECURITY).authenticated()
+                .antMatchers(ADMIN_SECURITY).authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .httpBasic()

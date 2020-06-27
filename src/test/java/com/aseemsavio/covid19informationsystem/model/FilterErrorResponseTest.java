@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class FilterErrorResponseTest {
 
@@ -13,7 +13,7 @@ public class FilterErrorResponseTest {
     @BeforeAll
     public static void init() {
         filterErrorResponse = new FilterErrorResponse();
-        filterErrorResponse.setErrors(Arrays.asList(new Error(1, "error"), new Error(2, "occured")));
+        filterErrorResponse.setErrors(List.of(new Error(1, "error"), new Error(2, "occured")));
         filterErrorResponse.setTotalResults(10);
     }
 

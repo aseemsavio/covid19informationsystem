@@ -3,6 +3,26 @@ package com.aseemsavio.covid19informationsystem.utils;
 public class C19ISConstants {
 
     public static final String PROVINCE = "Province";
+    public static final String NULL = null;
+
+    public static final String SEPARATOR = "/*";
+    public static final String ADMIN = "/admin";
+    public static final String ADMIN_SECURITY = ADMIN.concat(SEPARATOR).intern();
+    public static final String USER = "/user";
+    public static final String USERS = "/users";
+    public static final String ACTUATOR = "/actuator";
+    public static final String ACTUATOR_SECURITY = ACTUATOR.concat(SEPARATOR).intern();
+    public static final String API_V1 = "/api/v1";
+    public static final String TIMESERIES = "/timeSeries";
+    public static final String COUNT = "/count";
+    public static final String PROVINCES = "/provinces";
+    public static final String COUNTRIES = "/countries";
+    public static final String TIME_SERIES_PROVINCE = "/timeSeries/province/{province}";
+    public static final String TIME_SERIES_COUNTRY = "/timeSeries/country/{country}";
+    public static final String COUNT_PROVINCE = "/count/province/{province}";
+    public static final String COUNT_COUNTRY = "/count/country/{country}";
+    public static final String PROVINCE_PV = "province";
+    public static final String COUNTRY_PV = "country";
 
     public static final Integer ZERO = 0;
     public static final Integer ONE = 1;
