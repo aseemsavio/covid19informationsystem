@@ -274,7 +274,7 @@ public class CoronaDataService {
         } catch (Exception e) {
             throw new CovidInvalidDataException();
         }
-        if (data != null && data.size() == 0)
+        if (data == null || data.size() == ZERO)
             throw new DataNotFoundException();
         return data;
     }
@@ -339,8 +339,7 @@ public class CoronaDataService {
         return userRepository.findAll();
     }
 
-    public void updateUsersInCache(List<User> users) {
-        var localCache = LocalCache.getInstance();
+    public void updateUsersInCache(List<User> users, LocalCache localCache) {
         var userMap = users.stream().collect(Collectors.toMap(User::getAuthorizationKey, user -> user));
         localCache.setUsers(userMap);
         log.info("Users Map updated successfully.");

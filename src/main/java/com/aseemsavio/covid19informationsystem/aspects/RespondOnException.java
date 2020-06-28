@@ -36,7 +36,7 @@ public class RespondOnException extends ResponseEntityExceptionHandler {
         Response response = new Response();
         LocalCache localCache = LocalCache.getInstance();
         response.setStatus(STATUS_FAILED);
-        response.setTotalResults(0);
+        response.setTotalResults(ZERO);
         Error error = new Error(ERROR_CODE_COVID_ERROR, ERROR_MSG_COVID_ERROR);
         response.setLastUpdatedMinutes(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - localCache.getLastUpdatedMilliSeconds()));
         response.setErrors(List.of(error));

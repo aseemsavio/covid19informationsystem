@@ -23,6 +23,14 @@ public class C19ISConstants {
     public static final String COUNT_COUNTRY = "/count/country/{country}";
     public static final String PROVINCE_PV = "province";
     public static final String COUNTRY_PV = "country";
+    public static final String DUB_HEARTBEAT = "dub";
+    public static final String HEARTBEAT_HEALTH_ENDPOINT = "/all/lub";
+    public static final String CRON_EVERY_ONE_HOUR = "0 0/59 * * * *";
+    public static final String CRON_EVERY_THIRTY_MINS = "0 0/30 * * * *";
+
+    public static final String EMAIL_ALREADY_FOUND = "Email already Found.";
+    public static final String DUPLICATE_AUTH_KEY = "Could not create your account now. Please try again after sometime.";
+    public static final String TRY_AGAIN_LATER = "Couldn't complete your request. Please try again later.";
 
     public static final Integer ZERO = 0;
     public static final Integer ONE = 1;
