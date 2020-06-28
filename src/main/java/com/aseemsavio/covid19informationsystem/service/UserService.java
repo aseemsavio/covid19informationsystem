@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.aseemsavio.covid19informationsystem.utils.C19ISConstants.*;
+
 @Service
 public class UserService {
 
@@ -15,17 +17,17 @@ public class UserService {
 
     public String getAuthorizationCode(User user) {
         if (userRepository.findByEmail(user.getEmail()) != null)
-            return "Email already Found.";
+            return EMAIL_ALREADY_FOUND;
         if (userRepository.findByAuthorizationKey(user.getAuthorizationKey()) != null)
-            return "Could not create your account now. Please try again after sometime.";
+            return DUPLICATE_AUTH_KEY;
         User newUser = userRepository.save(user);
         try {
             if (newUser.getAuthorizationKey() != null)
-                return "You're added to the FREE plan. You are permitted to send 30 requests per second to our servers. Enclosed within '<' and '>' is your Unique Authorization Code. Please store it in a secure location and keep it a secret. (The symbols are not part of your authorization code) <" + newUser.getAuthorizationKey() + ">.";
+                return newUser.getAuthorizationKey();
             else
-                return "Couldn't complete your request. Please try again later.";
+                return TRY_AGAIN_LATER;
         } catch(Exception e) {
-            return "Couldn't complete your request. Please try again later." + e;
+            return TRY_AGAIN_LATER + e;
         }
     }
 

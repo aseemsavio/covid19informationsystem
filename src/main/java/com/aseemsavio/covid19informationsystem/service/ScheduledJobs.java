@@ -20,17 +20,16 @@ public class ScheduledJobs {
 
     private static final Logger log = LoggerFactory.getLogger(ScheduledJobs.class);
 
-    public void updateUserDetailsInCache() {
-        dataService.updateUsersInCache(dataService.getAllUsers());
+    public void updateUserDetailsInCache(LocalCache localCache) {
+        dataService.updateUsersInCache(dataService.getAllUsers(), localCache);
         log.info("Scheduled Update User Details completed successfully");
     }
 
-    public void updateCoronaDataInCache() throws MalformedURLException {
+    public void updateCoronaDataInCache(LocalCache localCache) throws MalformedURLException {
         var start = System.currentTimeMillis();
         List<CoronaData> coronaDataList = dataService.readCSV(CONFIRMED_FILE_NAME, CONFIRMED);
         coronaDataList = dataService.editExistingList(coronaDataList, DEATH_FILE_NAME, DEATH);
         coronaDataList = dataService.editExistingList(coronaDataList, RECOVERED_FILE_NAME, RECOVERED);
-        var localCache = LocalCache.getInstance();
         List<String> newlyAddedData = dataService.saveToCollection(coronaDataList);
         dataService.deleteFromCollection(localCache.getIdsOfMongoData());
         localCache.setIdsOfMongoData(newlyAddedData);

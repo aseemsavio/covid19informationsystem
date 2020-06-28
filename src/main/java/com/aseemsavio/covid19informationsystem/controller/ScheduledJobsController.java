@@ -1,5 +1,6 @@
 package com.aseemsavio.covid19informationsystem.controller;
 
+import com.aseemsavio.covid19informationsystem.service.LocalCache;
 import com.aseemsavio.covid19informationsystem.service.ScheduledJobs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,7 +20,8 @@ public class ScheduledJobsController {
      */
     @Scheduled(cron = "0 0/30 * * * *")
     public void updateUserDetailsInCache() {
-        scheduledJobs.updateUserDetailsInCache();
+        var localCache = LocalCache.getInstance();
+        scheduledJobs.updateUserDetailsInCache(localCache);
     }
 
     /**
@@ -29,7 +31,8 @@ public class ScheduledJobsController {
      */
     @Scheduled(cron = "0 0/59 * * * *")
     public void updateCoronaDataToDatabase() throws MalformedURLException {
-        scheduledJobs.updateCoronaDataInCache();
+        var localCache = LocalCache.getInstance();
+        scheduledJobs.updateCoronaDataInCache(localCache);
     }
 
     @GetMapping("/all/lub")

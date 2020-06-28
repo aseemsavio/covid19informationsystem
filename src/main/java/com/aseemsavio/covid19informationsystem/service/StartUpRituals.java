@@ -29,11 +29,11 @@ public class StartUpRituals {
     private void init() throws MalformedURLException {
         long start = System.currentTimeMillis();
         log.info("App Initiation Rituals starting... ");
-        dataService.updateUsersInCache(dataService.getAllUsers());
+        LocalCache localCache = LocalCache.getInstance();
+        dataService.updateUsersInCache(dataService.getAllUsers(), localCache);
         List<CoronaData> coronaDataList = dataService.readCSV(CONFIRMED_FILE_NAME, CONFIRMED);
         coronaDataList = dataService.editExistingList(coronaDataList, DEATH_FILE_NAME, DEATH);
         coronaDataList = dataService.editExistingList(coronaDataList, RECOVERED_FILE_NAME, RECOVERED);
-        LocalCache localCache = LocalCache.getInstance();
         localCache.setIdsOfMongoData(dataService.saveToCollection(coronaDataList));
         localCache.setLastUpdatedMilliSeconds(System.currentTimeMillis());
         log.info("App Initiation Rituals Complete in " + (System.currentTimeMillis() - start) + "ms.");
