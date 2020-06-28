@@ -274,7 +274,7 @@ public class CoronaDataService {
         } catch (Exception e) {
             throw new CovidInvalidDataException();
         }
-        if (data != null && data.size() == 0)
+        if (data == null || data.size() == ZERO)
             throw new DataNotFoundException();
         return data;
     }
